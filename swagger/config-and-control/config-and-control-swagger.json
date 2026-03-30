@@ -1,562 +1,999 @@
 {
-  "openapi" : "3.1.0",
-  "components" : {
-    "schemas" : {
-      "ExpertObjectConfig" : {
-        "type" : "object",
-        "properties" : {
-          "uniprotId" : {
-            "type" : "string"
+  "openapi": "3.1.0",
+  "components": {
+    "schemas": {
+      "CreateNetworkRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "description"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
           },
-          "hgncId" : {
-            "type" : "string"
-          },
-          "symbol" : {
-            "type" : "string"
+          "description": {
+            "type": "string"
           }
         }
       },
-      "Genome" : {
-        "type" : "string",
-        "enum" : [ "HG38", "HG19" ]
-      },
-      "LoginRequest" : {
-        "type" : "object",
-        "properties" : {
-          "user" : {
-            "type" : "string"
+      "CreatePipelineRequest": {
+        "type": "object",
+        "required": [
+          "name",
+          "description",
+          "networkId",
+          "levels",
+          "expertObjects",
+          "transcriptionFactorConfig"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
           },
-          "pass" : {
-            "type" : "string"
-          }
-        }
-      },
-      "NetworkConfig" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string"
+          "description": {
+            "type": "string"
           },
-          "userId" : {
-            "type" : "string"
+          "networkId": {
+            "type": "string"
           },
-          "name" : {
-            "type" : "string"
+          "levels": {
+            "type": "integer",
+            "format": "int32"
           },
-          "description" : {
-            "type" : "string"
-          }
-        }
-      },
-      "PipelineConfig" : {
-        "type" : "object",
-        "properties" : {
-          "id" : {
-            "type" : "string"
-          },
-          "name" : {
-            "type" : "string"
-          },
-          "description" : {
-            "type" : "string"
-          },
-          "networkId" : {
-            "type" : "string"
-          },
-          "levels" : {
-            "type" : "integer",
-            "format" : "int32"
-          },
-          "step" : {
-            "$ref" : "#/components/schemas/PipelineSteps"
-          },
-          "expertObjects" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/ExpertObjectConfig"
+          "expertObjects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExpertObjectConfig"
             }
           },
-          "transcriptionFactorConfig" : {
-            "$ref" : "#/components/schemas/TranscriptionFactorConfig"
+          "transcriptionFactorConfig": {
+            "$ref": "#/components/schemas/TranscriptionFactorConfig"
           }
         }
       },
-      "PipelineStepRequest" : {
-        "type" : "object",
-        "properties" : {
-          "step" : {
-            "$ref" : "#/components/schemas/PipelineSteps"
+      "ExpertObjectConfig": {
+        "type": "object",
+        "properties": {
+          "uniprotId": {
+            "type": "string"
+          },
+          "hgncId": {
+            "type": "string"
+          },
+          "symbol": {
+            "type": "string"
           }
         }
       },
-      "PipelineSteps" : {
-        "type" : "string",
-        "enum" : [ "CONFIG", "LAUNCH", "TRANSCRIPTION_FACTOR", "EXPERT_OBJECTS", "SEARCH_LEVELS" ]
+      "FindNetworkRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
       },
-      "Strand" : {
-        "type" : "string",
-        "enum" : [ "POSITIVE", "NEGATIVE" ]
+      "FindPipelineRequest": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "networkId": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "page": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
       },
-      "TranscriptionFactorConfig" : {
-        "type" : "object",
-        "properties" : {
-          "promoterRegion" : {
-            "type" : "string"
+      "Genome": {
+        "type": "string",
+        "enum": [
+          "HG38",
+          "HG19"
+        ]
+      },
+      "LoginRequest": {
+        "type": "object",
+        "required": [
+          "username",
+          "password"
+        ],
+        "properties": {
+          "username": {
+            "type": "string"
           },
-          "reliability" : {
-            "type" : "integer",
-            "format" : "int32"
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "PipelineStepRequest": {
+        "type": "object",
+        "required": [
+          "id",
+          "step"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
           },
-          "start" : {
-            "type" : "number"
+          "step": {
+            "$ref": "#/components/schemas/PipelineSteps"
+          }
+        }
+      },
+      "PipelineSteps": {
+        "type": "string",
+        "enum": [
+          "CONFIG",
+          "LAUNCH",
+          "TRANSCRIPTION_FACTOR",
+          "EXPERT_OBJECTS",
+          "SEARCH_LEVELS"
+        ]
+      },
+      "Strand": {
+        "type": "string",
+        "enum": [
+          "POSITIVE",
+          "NEGATIVE"
+        ]
+      },
+      "TranscriptionFactorConfig": {
+        "type": "object",
+        "properties": {
+          "promoterRegion": {
+            "type": "string"
           },
-          "end" : {
-            "type" : "number"
+          "reliability": {
+            "type": "integer",
+            "format": "int32"
           },
-          "genome" : {
-            "$ref" : "#/components/schemas/Genome"
+          "start": {
+            "type": "number"
           },
-          "track" : {
-            "type" : "string"
+          "end": {
+            "type": "number"
           },
-          "identity" : {
-            "type" : "number",
-            "format" : "float"
+          "genome": {
+            "$ref": "#/components/schemas/Genome"
           },
-          "chromosome" : {
-            "type" : "string"
+          "track": {
+            "type": "string"
           },
-          "strand" : {
-            "$ref" : "#/components/schemas/Strand"
+          "identity": {
+            "type": "number",
+            "format": "float"
           },
-          "sources" : {
-            "type" : "array",
-            "items" : {
-              "$ref" : "#/components/schemas/TranscriptionFactorSource"
+          "chromosome": {
+            "type": "string"
+          },
+          "strand": {
+            "$ref": "#/components/schemas/Strand"
+          },
+          "sources": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TranscriptionFactorSource"
             }
           }
         }
       },
-      "TranscriptionFactorSource" : {
-        "type" : "string",
-        "enum" : [ "TFBIND", "JASPAR" ]
+      "TranscriptionFactorSource": {
+        "type": "string",
+        "enum": [
+          "TFBIND",
+          "JASPAR"
+        ]
       },
-      "UserRequest" : {
-        "type" : "object",
-        "properties" : {
-          "username" : {
-            "type" : "string"
+      "UpdateNetworkRequest": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "description"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
           },
-          "firstName" : {
-            "type" : "string"
+          "name": {
+            "type": "string"
           },
-          "lastName" : {
-            "type" : "string"
+          "description": {
+            "type": "string"
+          }
+        }
+      },
+      "UpdatePipelineRequest": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "description",
+          "levels",
+          "expertObjects",
+          "transcriptionFactorConfig"
+        ],
+        "properties": {
+          "id": {
+            "type": "string"
           },
-          "password" : {
-            "type" : "string"
+          "name": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "levels": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "expertObjects": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ExpertObjectConfig"
+            }
+          },
+          "transcriptionFactorConfig": {
+            "$ref": "#/components/schemas/TranscriptionFactorConfig"
+          }
+        }
+      },
+      "UserRequest": {
+        "type": "object",
+        "required": [
+          "username",
+          "firstName",
+          "lastName",
+          "password"
+        ],
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "firstName": {
+            "type": "string"
+          },
+          "lastName": {
+            "type": "string"
+          },
+          "password": {
+            "type": "string"
+          }
+        }
+      },
+      "UsersKeycloakFiltersRequest": {
+        "type": "object",
+        "properties": {
+          "username": {
+            "type": "string"
+          },
+          "email": {
+            "type": "string"
+          },
+          "search": {
+            "type": "string"
+          },
+          "enable": {
+            "type": "boolean"
           }
         }
       }
     }
   },
-  "paths" : {
-    "/config-and-control/auth" : {
-      "post" : {
-        "summary" : "User authentication",
-        "description" : "Authenticates a user with provided credentials and returns an authentication token.",
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/LoginRequest"
+  "paths": {
+    "/config-and-control/admin/users": {
+      "get": {
+        "summary": "List keycloak users",
+        "description": "List keycloak users with option to apply same filters",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UsersKeycloakFiltersRequest"
               }
             }
           },
-          "required" : true
+          "required": true
         },
-        "responses" : {
-          "200" : {
-            "description" : "User successfully authenticated",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "object",
-                  "description" : "Authentication token response",
-                  "properties" : {
-                    "access_token" : {
-                      "type" : "string"
+        "responses": {
+          "200": {
+            "description": "Users list successfully obtained",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Users list obtained",
+                  "properties": {
+                    "id": {
+                      "type": "string"
                     },
-                    "refresh_token" : {
-                      "type" : "string"
+                    "username": {
+                      "type": "string"
                     },
-                    "token_type" : {
-                      "type" : "string"
+                    "email": {
+                      "type": "string"
                     },
-                    "id_token" : {
-                      "type" : "string"
+                    "firstName": {
+                      "type": "string"
                     },
-                    "expires_in" : {
-                      "type" : "integer",
-                      "format" : "int64"
+                    "lastName": {
+                      "type": "string"
+                    },
+                    "enabled": {
+                      "type": "string"
+                    },
+                    "emailVerified": {
+                      "type": "string"
+                    },
+                    "createdTimestamp": {
+                      "type": "integer",
+                      "format": "int64"
                     }
                   }
                 }
               }
             }
-          },
-          "400" : {
-            "description" : "Bad Request"
           }
         },
-        "tags" : [ "Auth Controller" ]
+        "tags": [
+          "Admin Controller"
+        ]
       }
     },
-    "/config-and-control/networks" : {
-      "put" : {
-        "summary" : "Update network configuration",
-        "description" : "Updates an existing network configuration for biological data processing.",
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/NetworkConfig"
+    "/config-and-control/networks": {
+      "put": {
+        "summary": "Update network configuration",
+        "description": "Updates an existing network configuration for biological data processing.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateNetworkRequest"
               }
             }
           },
-          "required" : true
+          "required": true
         },
-        "responses" : {
-          "200" : {
-            "description" : "Network configuration successfully updated",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "object",
-                  "description" : "Updated network configuration",
-                  "properties" : {
-                    "id" : {
-                      "type" : "string"
+        "responses": {
+          "200": {
+            "description": "Network configuration successfully updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Updated network configuration",
+                  "properties": {
+                    "id": {
+                      "type": "string"
                     },
-                    "userId" : {
-                      "type" : "string"
+                    "userId": {
+                      "type": "string"
                     },
-                    "name" : {
-                      "type" : "string"
+                    "name": {
+                      "type": "string"
                     },
-                    "description" : {
-                      "type" : "string"
+                    "description": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "integer",
+                      "format": "int32"
                     }
                   }
                 }
               }
             }
           },
-          "400" : {
-            "description" : "Bad Request"
+          "400": {
+            "description": "Bad Request"
           }
         },
-        "tags" : [ "Network Controller" ]
+        "tags": [
+          "Network Controller"
+        ]
       },
-      "post" : {
-        "summary" : "Create network configuration",
-        "description" : "Creates a new network configuration for biological data processing.",
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/NetworkConfig"
+      "get": {
+        "summary": "List user networks",
+        "description": "List networks associates for an user with option to apply same filters",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FindNetworkRequest"
               }
             }
           },
-          "required" : true
+          "required": true
         },
-        "responses" : {
-          "200" : {
-            "description" : "Network configuration successfully created",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "object",
-                  "description" : "Created network configuration",
-                  "properties" : {
-                    "id" : {
-                      "type" : "string"
+        "responses": {
+          "200": {
+            "description": "User networks list successfully obtained",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "User networks obtained",
+                  "properties": {
+                    "id": {
+                      "type": "string"
                     },
-                    "userId" : {
-                      "type" : "string"
+                    "userId": {
+                      "type": "string"
                     },
-                    "name" : {
-                      "type" : "string"
+                    "name": {
+                      "type": "string"
                     },
-                    "description" : {
-                      "type" : "string"
+                    "description": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "integer",
+                      "format": "int32"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Network Controller"
+        ]
+      },
+      "post": {
+        "summary": "Create network configuration",
+        "description": "Creates a new network configuration for biological data processing.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateNetworkRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Network configuration successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Created network configuration",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "userId": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "integer",
+                      "format": "int32"
                     }
                   }
                 }
               }
             }
           },
-          "400" : {
-            "description" : "Bad Request"
+          "400": {
+            "description": "Bad Request"
           }
         },
-        "tags" : [ "Network Controller" ]
+        "tags": [
+          "Network Controller"
+        ]
       }
     },
-    "/config-and-control/pipelines" : {
-      "put" : {
-        "summary" : "Update pipeline configuration",
-        "description" : "Updates an existing pipeline configuration for biological data processing workflows.",
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/PipelineConfig"
+    "/config-and-control/networks/{id}": {
+      "get": {
+        "summary": "User network information",
+        "description": "Get network information for an Id network of user logged",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Network information successfully obtained",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Network information obtained",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "userId": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "integer",
+                      "format": "int32"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Network Controller"
+        ]
+      }
+    },
+    "/config-and-control/pipelines": {
+      "put": {
+        "summary": "Update pipeline configuration",
+        "description": "Updates an existing pipeline configuration for biological data processing workflows.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdatePipelineRequest"
               }
             }
           },
-          "required" : true
+          "required": true
         },
-        "responses" : {
-          "200" : {
-            "description" : "Pipeline configuration successfully updated",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "object",
-                  "description" : "Updated pipeline configuration",
-                  "properties" : {
-                    "id" : {
-                      "type" : "string"
+        "responses": {
+          "200": {
+            "description": "Pipeline configuration successfully updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Updated pipeline configuration",
+                  "properties": {
+                    "id": {
+                      "type": "string"
                     },
-                    "name" : {
-                      "type" : "string"
+                    "name": {
+                      "type": "string"
                     },
-                    "description" : {
-                      "type" : "string"
+                    "description": {
+                      "type": "string"
                     },
-                    "networkId" : {
-                      "type" : "string"
+                    "networkId": {
+                      "type": "string"
                     },
-                    "levels" : {
-                      "type" : "integer",
-                      "format" : "int32"
+                    "levels": {
+                      "type": "integer",
+                      "format": "int32"
                     },
-                    "step" : {
-                      "$ref" : "#/components/schemas/PipelineSteps"
+                    "step": {
+                      "$ref": "#/components/schemas/PipelineSteps"
                     },
-                    "expertObjects" : {
-                      "type" : "array",
-                      "items" : {
-                        "$ref" : "#/components/schemas/ExpertObjectConfig"
+                    "expertObjects": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ExpertObjectConfig"
                       }
                     },
-                    "transcriptionFactorConfig" : {
-                      "$ref" : "#/components/schemas/TranscriptionFactorConfig"
+                    "transcriptionFactorConfig": {
+                      "$ref": "#/components/schemas/TranscriptionFactorConfig"
+                    },
+                    "createdAt": {
+                      "type": "integer",
+                      "format": "int32"
                     }
                   }
                 }
               }
             }
           },
-          "400" : {
-            "description" : "Bad Request"
+          "400": {
+            "description": "Bad Request"
           }
         },
-        "tags" : [ "Pipeline Controller" ]
+        "tags": [
+          "Pipeline Controller"
+        ]
       },
-      "post" : {
-        "summary" : "Create pipeline configuration",
-        "description" : "Creates a new pipeline configuration for biological data processing workflows.",
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/PipelineConfig"
+      "get": {
+        "summary": "List user pipelines",
+        "description": "List pipelines associates for an user with option to apply same filters",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FindPipelineRequest"
               }
             }
           },
-          "required" : true
+          "required": true
         },
-        "responses" : {
-          "200" : {
-            "description" : "Pipeline configuration successfully created",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "object",
-                  "description" : "Created pipeline configuration",
-                  "properties" : {
-                    "id" : {
-                      "type" : "string"
+        "responses": {
+          "200": {
+            "description": "User pipelines list successfully obtained",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "User pipelines obtained",
+                  "properties": {
+                    "id": {
+                      "type": "string"
                     },
-                    "name" : {
-                      "type" : "string"
+                    "userId": {
+                      "type": "string"
                     },
-                    "description" : {
-                      "type" : "string"
+                    "name": {
+                      "type": "string"
                     },
-                    "networkId" : {
-                      "type" : "string"
+                    "description": {
+                      "type": "string"
                     },
-                    "levels" : {
-                      "type" : "integer",
-                      "format" : "int32"
+                    "createdAt": {
+                      "type": "integer",
+                      "format": "int32"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Pipeline Controller"
+        ]
+      },
+      "post": {
+        "summary": "Create pipeline configuration",
+        "description": "Creates a new pipeline configuration for biological data processing workflows.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreatePipelineRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Pipeline configuration successfully created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Created pipeline configuration",
+                  "properties": {
+                    "id": {
+                      "type": "string"
                     },
-                    "step" : {
-                      "$ref" : "#/components/schemas/PipelineSteps"
+                    "name": {
+                      "type": "string"
                     },
-                    "expertObjects" : {
-                      "type" : "array",
-                      "items" : {
-                        "$ref" : "#/components/schemas/ExpertObjectConfig"
+                    "description": {
+                      "type": "string"
+                    },
+                    "networkId": {
+                      "type": "string"
+                    },
+                    "levels": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "step": {
+                      "$ref": "#/components/schemas/PipelineSteps"
+                    },
+                    "expertObjects": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ExpertObjectConfig"
                       }
                     },
-                    "transcriptionFactorConfig" : {
-                      "$ref" : "#/components/schemas/TranscriptionFactorConfig"
+                    "transcriptionFactorConfig": {
+                      "$ref": "#/components/schemas/TranscriptionFactorConfig"
+                    },
+                    "createdAt": {
+                      "type": "integer",
+                      "format": "int32"
                     }
                   }
                 }
               }
             }
           },
-          "400" : {
-            "description" : "Bad Request"
+          "400": {
+            "description": "Bad Request"
           }
         },
-        "tags" : [ "Pipeline Controller" ]
+        "tags": [
+          "Pipeline Controller"
+        ]
       }
     },
-    "/config-and-control/pipelines/launch" : {
-      "post" : {
-        "summary" : "Launch pipeline execution",
-        "description" : "Launches the execution of a configured pipeline for biological data processing.",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "query",
-          "schema" : {
-            "type" : "string"
+    "/config-and-control/pipelines/launch": {
+      "get": {
+        "summary": "Launch pipeline execution",
+        "description": "Launches the execution of a configured pipeline for biological data processing.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
-        } ],
-        "responses" : {
-          "202" : {
-            "description" : "Pipeline successfully launched for execution",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "string",
-                  "description" : "Success message with pipeline ID"
+        ],
+        "responses": {
+          "202": {
+            "description": "Pipeline successfully launched for execution",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "description": "Success message with pipeline ID"
                 }
               }
             }
           }
         },
-        "tags" : [ "Pipeline Controller" ]
+        "tags": [
+          "Pipeline Controller"
+        ]
       }
     },
-    "/config-and-control/pipelines/update-step/{id}" : {
-      "patch" : {
-        "summary" : "Update pipeline step",
-        "description" : "Updates a specific step within a pipeline configuration.",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
-          }
-        } ],
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/PipelineStepRequest"
+    "/config-and-control/pipelines/update-step": {
+      "patch": {
+        "summary": "Update pipeline step",
+        "description": "Updates a specific step within a pipeline configuration.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PipelineStepRequest"
               }
             }
           },
-          "required" : true
+          "required": true
         },
-        "responses" : {
-          "202" : {
-            "description" : "Pipeline step successfully updated",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "string",
-                  "description" : "Success message"
+        "responses": {
+          "202": {
+            "description": "Pipeline step successfully updated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "description": "Success message"
                 }
               }
             }
           }
         },
-        "tags" : [ "Pipeline Controller" ]
+        "tags": [
+          "Pipeline Controller"
+        ]
       }
     },
-    "/config-and-control/user/recovery/{id}" : {
-      "post" : {
-        "summary" : "Recover user account",
-        "description" : "Initiates the account recovery process for a user with the specified ID.",
-        "parameters" : [ {
-          "name" : "id",
-          "in" : "path",
-          "required" : true,
-          "schema" : {
-            "type" : "string"
+    "/config-and-control/pipelines/{id}": {
+      "get": {
+        "summary": "User pipeline information",
+        "description": "Get pipeline information for an Id pipeline of user logged",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
-        } ],
-        "responses" : {
-          "202" : {
-            "description" : "Account recovery process initiated",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "string",
-                  "description" : "Recovery confirmation"
+        ],
+        "responses": {
+          "200": {
+            "description": "Pipeline information successfully obtained",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Pipeline information obtained",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "userId": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "createdAt": {
+                      "type": "integer",
+                      "format": "int32"
+                    }
+                  }
                 }
               }
             }
           }
         },
-        "tags" : [ "User Controller" ]
+        "tags": [
+          "Pipeline Controller"
+        ]
       }
     },
-    "/config-and-control/user/register" : {
-      "post" : {
-        "summary" : "Register new user",
-        "description" : "Registers a new user in the system with the provided credentials and information.",
-        "requestBody" : {
-          "content" : {
-            "application/json" : {
-              "schema" : {
-                "$ref" : "#/components/schemas/UserRequest"
+    "/config-and-control/users": {
+      "post": {
+        "summary": "Register new user",
+        "description": "Registers a new user in the system with the provided credentials and information.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserRequest"
               }
             }
           },
-          "required" : true
+          "required": true
         },
-        "responses" : {
-          "201" : {
-            "description" : "User successfully registered",
-            "content" : {
-              "application/json" : {
-                "schema" : {
-                  "type" : "string",
-                  "description" : "Registration confirmation"
+        "responses": {
+          "201": {
+            "description": "User successfully registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "description": "Registration confirmation"
                 }
               }
             }
           },
-          "400" : {
-            "description" : "Bad Request"
+          "400": {
+            "description": "Bad Request"
           }
         },
-        "tags" : [ "User Controller" ]
+        "tags": [
+          "User Controller"
+        ]
+      }
+    },
+    "/config-and-control/users/login": {
+      "post": {
+        "summary": "User authentication",
+        "description": "Authenticates a user with provided credentials and returns an authentication token.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "User successfully authenticated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "description": "Authentication token response",
+                  "properties": {
+                    "access_token": {
+                      "type": "string"
+                    },
+                    "refresh_token": {
+                      "type": "string"
+                    },
+                    "token_type": {
+                      "type": "string"
+                    },
+                    "id_token": {
+                      "type": "string"
+                    },
+                    "expires_in": {
+                      "type": "integer",
+                      "format": "int64"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        },
+        "tags": [
+          "Auth Controller"
+        ]
+      }
+    },
+    "/config-and-control/users/{id}/password-recovery": {
+      "get": {
+        "summary": "Recover user account",
+        "description": "Initiates the account recovery process for a user with the specified ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "202": {
+            "description": "Account recovery process initiated",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "description": "Recovery confirmation"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "User Controller"
+        ]
       }
     }
   },
-  "info" : {
-    "title" : "config-and-control API",
-    "version" : "1.0.0-SNAPSHOT"
+  "info": {
+    "title": "config-and-control API",
+    "version": "1.0.0-SNAPSHOT"
   }
 }
