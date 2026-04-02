@@ -122,6 +122,17 @@
           "HG19"
         ]
       },
+      "LaunchPipelineRequest": {
+        "type": "object",
+        "required": [
+          "pipelineId"
+        ],
+        "properties": {
+          "pipelineId": {
+            "type": "string"
+          }
+        }
+      },
       "LoginRequest": {
         "type": "object",
         "required": [
@@ -759,18 +770,19 @@
       }
     },
     "/config-and-control/pipelines/launch": {
-      "get": {
+      "post": {
         "summary": "Launch pipeline execution",
         "description": "Launches the execution of a configured pipeline for biological data processing.",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "query",
-            "schema": {
-              "type": "string"
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LaunchPipelineRequest"
+              }
             }
-          }
-        ],
+          },
+          "required": true
+        },
         "responses": {
           "202": {
             "description": "Pipeline successfully launched for execution",
@@ -782,6 +794,9 @@
                 }
               }
             }
+          },
+          "400": {
+            "description": "Bad Request"
           }
         },
         "tags": [
