@@ -678,14 +678,14 @@
                     "id": {
                       "type": "string"
                     },
-                    "userId": {
-                      "type": "string"
-                    },
                     "name": {
                       "type": "string"
                     },
                     "description": {
                       "type": "string"
+                    },
+                    "step": {
+                      "$ref": "#/components/schemas/PipelineSteps"
                     },
                     "createdAt": {
                       "type": "integer",
@@ -862,14 +862,30 @@
                     "id": {
                       "type": "string"
                     },
-                    "userId": {
-                      "type": "string"
-                    },
                     "name": {
                       "type": "string"
                     },
                     "description": {
                       "type": "string"
+                    },
+                    "networkId": {
+                      "type": "string"
+                    },
+                    "levels": {
+                      "type": "integer",
+                      "format": "int32"
+                    },
+                    "step": {
+                      "$ref": "#/components/schemas/PipelineSteps"
+                    },
+                    "expertObjects": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ExpertObjectConfig"
+                      }
+                    },
+                    "transcriptionFactorConfig": {
+                      "$ref": "#/components/schemas/TranscriptionFactorConfig"
                     },
                     "createdAt": {
                       "type": "integer",
