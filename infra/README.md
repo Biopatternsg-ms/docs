@@ -59,7 +59,7 @@ El script `infra.py` hace uso de nodos `Custom` para los componentes que requier
 
 ### 1. Diagrama de Infraestructura de Contenedores (`infra.py`)
 
-Genera la topología de red Docker (`general-network`), proxy SSL, KrakenD Gateway, microservicios Quarkus, servidor MongoDB, Keycloak, PostgreSQL, RabbitMQ y el servicio FastAPI:
+Genera la topología de la **Máquina Virtual** hospedada dentro del **Ecosistema RedCLARA**, que contiene la red Docker (`general-network`), proxy SSL, KrakenD Gateway, microservicios Quarkus y FastAPI, servidor MongoDB, Keycloak, PostgreSQL y RabbitMQ:
 
 ```bash
 python3 infra.py
@@ -82,19 +82,30 @@ python3 deploy.py
 ## 🏗️ Descripción de los Diagramas
 
 ### A. Infraestructura (`infra_architecture.png`)
-* **Red Docker**: `general-network`.
+* **Entorno Host**: **Ecosistema RedCLARA** $\rightarrow$ **Máquina Virtual (VM Host)**.
+* **Red de Contenedores**: `Red Docker: general-network`.
 * **Punto de Entrada**: Nginx Reverse Proxy con terminación SSL (`HTTPS / 443`).
 * **Enrutamiento**:
   * `/` $\rightarrow$ Web App (React + Nginx).
   * `/api/*` $\rightarrow$ KrakenD Gateway.
   * `/auth/*` $\rightarrow$ Keycloak (IAM) con base de datos dedicada PostgreSQL.
 * **Seguridad API**: KrakenD valida tokens JWT directamente contra Keycloak.
-* **Microservicios Backend (Quarkus)**:
+* **Microservicios Backend en Quarkus**:
   * `config-and-control-service` (interactúa con Keycloak para registro y login).
   * `ontologies-service` y `pubmed-integration-service` (integrados con colas/eventos en **RabbitMQ**).
   * `biological-objects-service`.
-* **Procesamiento Interno**: `build-knowledge-base` (Python/FastAPI, sin base de datos ni exposición pública, consumido por `pubmed-integration-service`).
-* **Persistencia NoSQL**: Un único contenedor Docker para el servidor **MongoDB** con bases de datos lógicas aisladas para cada microservicio.
+  * `integration-service`.
+  * `inferences-service`.
+* **Microservicios en Python / FastAPI**:
+  * `ai-reasoning-service`: Microservicio de razonamiento de IA expuesto a través de KrakenD y con base de datos propia en MongoDB (`ai-reasoning-db`).
+  * `build-knowledge-base`: Microservicio interno sin base de datos ni exposición pública, consumido directamente por `pubmed-integration-service`.
+* **Persistencia NoSQL**: Un único contenedor Docker para el servidor **MongoDB** con bases de datos lógicas aisladas para cada microservicio:
+  * `config-and-control-db`
+  * `ontologies-db`
+  * `pubmed-integration-db`
+  * `biological-objects-db`
+  * `inferences-db`
+  * `ai-reasoning-db`
 
 ---
 
