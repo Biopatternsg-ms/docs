@@ -1,0 +1,83 @@
+model {
+    extend biopatternsg.pubmed_integration {
+        
+        restController = component 'Rest Controller' {
+            description 'REST controller for PubmedIntegration'
+            technology 'Java 21'
+        }
+
+     
+        dbRepositoryAdapter = component 'DB Repository Adapter'  {
+            description 'Database repository adapter for PubmedIntegration'
+            technology 'Panache'
+        }
+
+        internalClientAdapter = component 'Internal Client Adapter' {
+            description 'Internal client adapter for PubmedIntegration'
+            technology 'Java 21'
+        }
+
+        externalClientAdapter = component 'External Client Adapter' {
+            description 'External client adapter for PubmedIntegration'
+            technology 'Java 21'
+        }
+
+        queueAdapter = component 'Queue Adapter'  {
+            description 'Queue adapter for ConfigAndControl'
+            technology 'Java 21'
+        }
+        
+    }
+
+
+    biopatternsg.gateway -> biopatternsg.pubmed_integration.restController 'Routes requests to' {
+        technology 'HTTP'
+        description 'Routes requests to the PubmedIntegration REST controller'
+    }
+
+    biopatternsg.pubmed_integration.dbRepositoryAdapter -> biopatternsg.mongodb.pubmedIntegrationMongodb 'Reads from and writes to' {
+        technology 'MongoDB'
+        description 'Reads from and writes to the PubmedIntegration MongoDB database'
+    }
+
+    internalClientAdapter -> biopatternsg.biological_objects.restController 'communicates with' {
+        description 'Communicates with the internal client adapter of BiologicalObjects'
+        technology 'HTTP'
+    }
+
+    internalClientAdapter -> biopatternsg.ontologies.restController 'communicates with' {
+        description 'Communicates with the internal client adapter of Ontologies'
+        technology 'HTTP'
+    }
+
+    externalClientAdapter -> PubTator 'communicates with' {
+        description 'Communicates with PubTator for biomedical text mining'
+        technology 'HTTP'
+    }
+
+    externalClientAdapter -> PubMed 'communicates with' {
+        description 'Communicates with PubMed for scientific publications'
+        technology 'HTTP'
+    }
+
+    queueAdapter -> biopatternsg.queue.queuePubmed 'sends messages to' {
+        description 'Sends messages to the PubMed Queue for data processing'
+        technology 'RabbitMQ'
+    }
+
+    biopatternsg.queue.queuePubmed -> queueAdapter 'sends messages to' {
+        description 'Sends messages from the PubMed Queue to the Queue Adapter for data processing'
+        technology 'RabbitMQ'
+    }
+
+    queueAdapter -> biopatternsg.queue.queuePubtator 'sends messages to' {
+        description 'Sends messages to the PubTator Queue for data processing'
+        technology 'RabbitMQ'
+    }
+
+    biopatternsg.queue.queuePubtator -> queueAdapter 'sends messages to' {
+        description 'Sends messages from the PubTator Queue to the Queue Adapter for data processing'
+        technology 'RabbitMQ'
+    }
+ 
+}

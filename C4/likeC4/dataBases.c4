@@ -1,0 +1,34 @@
+model {
+
+    extend biopatternsg {
+
+        mongodb = database 'MongoDB' {
+            title 'MongoDB Database'
+            description 'Database for storing non-relational data'
+            biologicalObjectsMongodb = database 'BiologicalObjectsMongoDB' {
+                description 'Database for storing biological objects'
+            }
+            ontologiesMongodb = database 'OntologiesMongoDB' {
+                description 'Database for storing ontologies'
+            }
+
+            configAndControlMongodb = database 'ConfigAndControlMongoDB' {
+                description 'Database for storing configuration and control data'
+            }
+            pubmedIntegrationMongodb = database 'PubmedIntegrationMongoDB' {
+                description 'Database for storing PubMed integration data'
+            }
+        }
+
+        postgresql = database 'PostgreSQL' {
+            title 'PostgreSQL Database'
+            description 'Database for storing relational data'
+            keycloackDB = database 'KeycloackDB' {
+                description 'Database for storing keycloack data'
+            }
+        }
+
+
+
+    }
+}

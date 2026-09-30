@@ -1,0 +1,26 @@
+graph TD
+    subgraph "Red Externa"
+        Usuario[Usuario]
+    end
+
+    subgraph "Red Docker"
+        Nginx[Nginx Reverse Proxy]
+
+        subgraph "Contenedores de UI"
+            UI[Contenedor de UI]
+        end
+
+        subgraph "Contenedores de Microservicios"
+            KrakenD[KrakenD Gateway]
+            Microservicio1[Microservicio A]
+            Microservicio2[Microservicio B]
+            Microservicio3[Microservicio C]
+        end
+    end
+
+    Usuario --> Nginx
+    Nginx -- "/ui" --> UI
+    Nginx -- "/api" --> KrakenD
+    KrakenD --> Microservicio1
+    KrakenD --> Microservicio2
+    KrakenD --> Microservicio3

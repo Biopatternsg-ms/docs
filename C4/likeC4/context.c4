@@ -1,0 +1,53 @@
+model {
+  customer = user 'User'
+
+  adminUser = adminUser 'Admin User' {
+    description 'Administrator of the system'
+  }
+  
+  // Definimos el sistema principal (vacío por ahora)
+  biopatternsg = system 'Biopatternsg'
+
+
+  smtpService = externalSystem 'SMTP Service' {
+    description 'Email sending service'
+  }
+
+  pdb = externalSystem 'PDB' {
+    description 'Protein Data Bank'
+  }
+
+  quickgo = externalSystem 'QuickGO' {
+    description 'QuickGO service for Gene Ontology'
+  }
+
+  PubMed = externalSystem 'PubMed' {
+    description 'PubMed service for scientific publications'
+  }
+
+  Mesh = externalSystem 'MeSH' {
+    description 'Medical Subject Headings service'
+  }
+
+  PubTator = externalSystem 'PubTator' {
+    description 'PubTator service for biomedical text mining'
+  }
+
+  uniprot = externalSystem 'UniProt' {
+    description 'UniProt service for protein information'
+  }
+
+  HGNC = externalSystem 'HGNC' {
+    description 'HUGO Gene Nomenclature Committee'
+  }
+
+  TFBIND = externalSystem 'TFBIND' {
+    description 'TFBIND service for transcription factor binding sites'
+  }
+
+  JASPAR = externalSystem 'JASPAR' {
+    description 'JASPAR service for transcription factor binding profiles'
+  }
+
+
+}

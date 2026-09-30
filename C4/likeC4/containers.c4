@@ -1,0 +1,73 @@
+model {
+    // Extendemos el sistema definido en context.c4
+
+    extend biopatternsg {
+        webapp = ui 'Web App' {
+            description 'User interface for biopatternsg'
+            technology 'React'
+        }
+
+        gateway = container 'Gateway' {
+            description 'API Gateway for biopatternsg'
+            technology 'KrakenD gateway'
+        }
+
+        config_and_control = container 'ConfigAndControl'{
+            description 'Configuration and control module for biopatternsg'
+            technology 'Quarkus'
+        }
+       
+        biological_objects = container 'BiologicalObjects' {
+            description 'Module for managing biological objects'
+            technology 'Quarkus'
+        }
+
+        pubmed_integration = container 'PubmedIntegration' {
+            description 'Module for integrating with PubMed'
+            technology 'Quarkus'
+        }
+
+        ontologies = container 'Ontologies' {
+            description 'Module for managing ontologies'
+            technology 'Quarkus'
+        }
+
+        keycloack = container 'Keycloack' {
+            description 'Authentication and authorization service'
+            technology 'Keycloack'
+        }
+    }
+
+    gateway -> keycloack 'Authenticates and authorizes requests' {
+        technology 'HTTP'
+        description 'Authenticates and authorizes requests to biopatternsg'
+    }
+
+    customer -> webapp 'Uses' {
+        description 'Uses the biopatternsg web application'
+    }
+
+    keycloack -> biopatternsg.postgresql.keycloackDB 'Reads from and writes to' {
+        technology 'PostgreSQL'
+        description 'Reads from and writes to the PostgreSQL database for user management'
+    }
+
+    keycloack -> smtpService 'Sends emails via' {
+        technology 'SMTP'
+        description 'Sends emails for user verification and password reset'
+    }
+
+    smtpService -> customer 'Sends emails to' {
+        description 'Sends emails to customers for user verification and password reset'
+    }
+
+    customer -> keycloack 'Interacts with' {
+        description 'Interacts with Keycloak for authentication and authorization'
+    }
+
+    adminUser -> webapp 'Uses' {
+        description 'Uses the biopatternsg web application for administrative tasks'
+    }
+
+  
+}

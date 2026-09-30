@@ -1,0 +1,149 @@
+model{
+    extend biopatternsg.biological_objects {
+
+        restController = component 'Rest Controller' {
+            description 'REST controller for BiologicalObjects'
+            technology 'Java 21'
+        }
+
+        pipelineStagesManager = component 'Pipeline Stages Manager' {
+            description 'Pipeline stages manager for BiologicalObjects'
+            technology 'Java 21'
+        }
+
+        SearchTranscriptionFactors = component 'Search Transcription Factors' {
+            description 'Search transcription factors for BiologicalObjects'
+            technology 'Java 21'
+        }
+
+        BuildBiologicalObject = component 'Build Biological Object' {
+            description 'Build biological object for BiologicalObjects'
+            technology 'Java 21'
+        }
+
+        DiscoveryBiologicalObject = component 'Discovery Biological Object' {
+            description 'Discovery biological object for BiologicalObjects'
+            technology 'Java 21'
+        }
+
+        UpdateObjects = component 'Update Objects' {
+            description 'Update objects for BiologicalObjects'
+            technology 'Java 21'
+        }
+
+        FindObjects = component 'Find Objects' {
+            description 'Find objects for BiologicalObjects'
+            technology 'Java 21'
+        }
+
+        dbRepositoryAdapter = component 'DB Repository Adapter'  {
+            description 'Database repository adapter for BiologicalObjects'
+            technology 'Panache'
+        }
+
+        internalClientAdapter = component 'Internal Client Adapter' {
+            description 'Internal client adapter for BiologicalObjects'
+            technology 'Java 21'
+        }
+
+        externalSystemAdapter = component 'External System Adapter' {
+            description 'External system adapter for BiologicalObjects'
+            technology 'Java 21'
+        }
+
+        externalSystemAdapter -> TFBIND 'Communicates with' {
+            technology 'HTTPS'
+            description 'Communicates with TFBIND for transcription factor binding sites'
+        }
+
+        externalSystemAdapter -> JASPAR 'Communicates with' {
+            technology 'HTTPS'
+            description 'Communicates with JASPAR for transcription factor binding profiles'
+        }
+        
+    }
+
+
+    restController -> pipelineStagesManager 'uses' {
+        description 'Handles pipeline stages management requests'
+    }
+
+    pipelineStagesManager -> SearchTranscriptionFactors 'uses' {
+        description 'Handles search transcription factors requests'
+    }
+
+   
+    pipelineStagesManager -> DiscoveryBiologicalObject 'uses' {
+        description 'Handles discover biological object requests'
+    }
+
+    SearchTranscriptionFactors -> BuildBiologicalObject 'uses' {
+        description 'Uses the build biological object component for building biological objects'
+    }
+
+    DiscoveryBiologicalObject -> BuildBiologicalObject 'uses' {
+        description 'Uses the build biological object component for building biological objects'
+    }
+
+    BuildBiologicalObject -> dbRepositoryAdapter 'uses' {
+        description 'Uses the database repository adapter for data persistence'
+    }
+
+    dbRepositoryAdapter -> biopatternsg.mongodb.biologicalObjectsMongodb 'Reads from and writes to' {
+        technology 'MongoDB'
+        description 'Reads from and writes to the BiologicalObjects MongoDB database'
+    }
+
+    BuildBiologicalObject -> internalClientAdapter 'uses' {
+        description 'Uses the internal client adapter for internal service communication'
+    }
+
+    BuildBiologicalObject -> externalSystemAdapter 'uses' {
+        description 'Uses the external system adapter for external service communication'
+    }
+
+    externalSystemAdapter -> uniprot 'Communicates with' {
+        technology 'HTTPS'
+        description 'Communicates with QuickGO for Gene Ontology data'
+    }
+
+    externalSystemAdapter -> HGNC 'Communicates with' {
+        technology 'HTTPS'
+        description 'Communicates with QuickGO for Gene Ontology data'
+    }
+
+    externalSystemAdapter -> pdb 'Communicates with' {
+        technology 'HTTPS'
+        description 'Communicates with QuickGO for Gene Ontology data'
+    }
+
+    internalClientAdapter -> biopatternsg.config_and_control.restController 'communicates with' {
+        description 'Communicates with ConfigAndControl for internal service communication'
+        technology 'http'
+    }
+
+    internalClientAdapter -> biopatternsg.ontologies.restController 'communicates with' {
+        description 'Communicates with Ontologies for internal service communication'
+        technology 'http'
+    }
+
+    restController -> FindObjects 'uses' {
+        description 'Handles find objects requests'
+    }
+
+    restController -> UpdateObjects 'uses' {
+        description 'Handles update objects requests'
+    }
+
+    UpdateObjects -> dbRepositoryAdapter 'uses' {
+        description 'Uses the database repository adapter for data persistence'
+    }
+
+    FindObjects -> dbRepositoryAdapter 'uses' {
+        description 'Uses the database repository adapter for data persistence'
+    }
+
+    restController -> SearchTranscriptionFactors 'uses' {
+        description 'Uses the search transcription factors component for searching transcription factors'
+    }
+}
