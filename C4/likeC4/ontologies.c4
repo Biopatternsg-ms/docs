@@ -1,0 +1,60 @@
+model {
+    extend  biopatternsg.ontologies {
+        restController = component 'Rest Controller' {
+            description 'REST controller for Ontologies'
+            technology 'Java 21'
+        }
+
+        ontologiesManager = component 'Ontologies Manager' {
+            description 'Ontologies manager for Ontologies'
+            technology 'Java 21'
+        }
+
+        dbRepositoryAdapter = component 'DB Repository Adapter'  {
+            description 'Database repository adapter for Ontologies'
+            technology 'Panache'
+        }
+
+        internalClientAdapter = component 'Internal Client Adapter' {
+            description 'Internal client adapter for Ontologies'
+            technology 'Java 21'
+        }
+
+        externalClientAdapter = component 'External Client Adapter' {
+            description 'External client adapter for Ontologies'
+            technology 'Java 21'
+        }
+
+        queueAdapter = component 'Queue Adapter'  {
+            description 'Queue adapter for ConfigAndControl'
+            technology 'Java 21'
+        }
+        
+    }
+
+
+    internalClientAdapter -> biopatternsg.biological_objects.restController 'communicates with' {
+        description 'Communicates with the internal client adapter of BiologicalObjects'
+        technology 'HTTP'
+    }
+
+    externalClientAdapter -> quickgo 'communicates with' {
+        description 'Communicates with QuickGO for ontology data'
+        technology 'HTTP'
+    }
+
+    externalClientAdapter -> Mesh 'communicates with' {
+        description 'Communicates with MeSH for ontology data'
+        technology 'HTTP'
+    }
+
+    queueAdapter -> biopatternsg.queue.queueMesh 'sends messages to' {
+        description 'Sends messages to the Mesh Queue for ontology data processing'
+        technology 'RabbitMQ'
+    }
+
+    biopatternsg.queue.queueMesh -> queueAdapter 'sends messages to' {
+        description 'Sends messages from the Mesh Queue to the Queue Adapter for ontology data processing'
+        technology 'RabbitMQ'
+    }
+    }

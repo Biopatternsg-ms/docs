@@ -1,0 +1,87 @@
+model {
+
+    extend biopatternsg.config_and_control {
+
+        restController = component 'Rest Controller' {
+            description 'REST controller for ConfigAndControl'
+            technology 'Java 21'
+        }
+
+        pipelinesOrchester = component 'pipelines Orchestration' {
+            description 'Pipelines orchestration for ConfigAndControl'
+            technology 'Java 21'
+        }
+
+        usersManager = component 'UsersManager' {
+            description 'Users manager for ConfigAndControl'
+            technology 'Java 21'
+        }
+
+        InternalClientAdapter = component 'Internal Client Adapter' {
+            description 'Internal client adapter for ConfigAndControl'
+            technology 'Java 21'
+        }
+
+        KeycloakClientAdapter = component 'Keycloak Client Adapter' {
+            description 'Keycloak client adapter for ConfigAndControl'
+            technology 'Java 21'
+        }
+
+        dbRepositoryAdapter = component 'DB Repository Adapter'  {
+            description 'Database repository adapter for ConfigAndControl'
+            technology 'Panache'
+        }
+
+    }
+
+    biopatternsg.gateway -> biopatternsg.config_and_control.restController 'Routes requests to' {
+        technology 'HTTP'
+        description 'Routes requests to the ConfigAndControl REST controller'
+    }
+
+    dbRepositoryAdapter -> biopatternsg.mongodb.configAndControlMongodb 'Reads from and writes to' {
+        technology 'MongoDB'
+        description 'Reads from and writes to the ConfigAndControl MongoDB database'
+    }
+
+    restController -> usersManager 'uses' {
+        description 'Handles user management requests'
+    }
+
+    restController -> pipelinesOrchester 'uses' {
+        description 'Handles pipeline orchestration requests'
+    }
+
+    pipelinesOrchester -> InternalClientAdapter 'uses' {
+        description 'Uses the internal client adapter for internal service communication'
+    }
+
+    usersManager -> KeycloakClientAdapter 'uses' {
+        description 'Uses the keycloak client adapter for keycloak communication'
+    }
+
+    pipelinesOrchester -> dbRepositoryAdapter 'uses' {
+        description 'Uses the database repository adapter for data persistence'
+    }
+
+    usersManager -> dbRepositoryAdapter 'uses' {
+        description 'Uses the database repository adapter for data persistence'
+    }
+
+    KeycloakClientAdapter -> biopatternsg.keycloack 'communicates with' {
+        description 'Communicates with Keycloak for authentication and authorization'
+        technology 'http'
+    }
+
+    InternalClientAdapter -> biopatternsg.biological_objects.restController 'communicates with' {
+        description 'Communicates with BiologicalObjects for internal service communication'
+        technology 'http'
+    }
+
+    InternalClientAdapter -> biopatternsg.pubmed_integration.restController 'communicates with' {
+        description 'Communicates with PubmedIntegration for internal service communication'
+        technology 'http'
+    }
+
+
+}

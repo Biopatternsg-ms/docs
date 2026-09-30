@@ -1,0 +1,51 @@
+views {
+  // Nivel 1: Contexto
+  view index {
+    title 'System Context Diagram'
+    include customer
+    include adminUser
+    include biopatternsg
+    include smtpService
+    include pdb
+    include quickgo
+    include PubMed
+    include uniprot
+    include HGNC
+    include Mesh
+    include PubTator
+    
+    autoLayout TopBottom
+  }
+
+  // Nivel 2: Contenedores
+  // AGREGAMOS "of biopatternsg" para habilitar la navegación
+  view containerView of biopatternsg { 
+    title 'Biopatternsg - Container Diagram'
+    
+    include *
+    include customer
+    
+    autoLayout TopBottom
+  }
+
+  view containerViewOfConfigAndControl of biopatternsg.config_and_control {
+    title 'ConfigAndControl - Container Diagram'
+    
+    include *
+    
+    autoLayout TopBottom
+  } 
+
+  view biologicalObjectsContainerView of biopatternsg.biological_objects {
+    title 'Biological Objects - Container Diagram'
+    
+    include *
+
+    autoLayout TopBottom
+  }
+
+ 
+
+ 
+
+}

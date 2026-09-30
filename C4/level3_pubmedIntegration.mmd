@@ -30,10 +30,9 @@ Container(rrg_building,"RRGBuilding")
 ContainerDb(database, "pubmed_integration_db", "MongoDB", "combinaciones, pubmedId, abstracts")
 
 Rel(config_and_control,controller, "Json/Http")
-Rel(kwg,config_and_control,"Json/Http")
-Rel(spmid,config_and_control,"Json/Http")
-Rel(pti,config_and_control,"Json/Http")
+Rel(repository,config_and_control,"Json/Http")
 Rel(rrg_building,controller,"Json/Http")
+Rel(repository,database,"Uses", "read & write")
 
 }
 Boundary(externalServices,"External Services"){
@@ -46,7 +45,7 @@ Rel(esa,pubmed,"USes", "Json/Https")
 
 }
 
-UpdateLayoutConfig($c4ShapeInRow="4", $c4BoundaryInRow="1")
+UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
 
 
 

@@ -24,11 +24,16 @@ Boundary(biopatternsg,"Biopatternsg"){
     Container(biologicalObjects,"Biological Objects")
     ContainerDb(database, "ontologies", "MongoDB", "biological objects")
 
+    SystemQueue(kafka, "Kafka queue")
+
+    Rel(mesh_adapter,kafka, producer)
+    
+    Rel(kafka,mesh_adapter, consumer)
 
     Rel(gateway, controller,"uses", "Json/Http")
+    
     Rel(biologicalObjects, controller,"uses", "Json/Http")
     Rel(repository,database,"read & write")
-
 }
 
 Boundary(externalServices,"External Services"){
@@ -40,12 +45,9 @@ System_Ext("quickGo","QuickGO")
     Rel(external_services, quickGo,"uses", "Json/Http")
 
 
-
-
 }
 
-UpdateLayoutConfig($c4ShapeInRow="3", $c4BoundaryInRow="1")
-
+UpdateLayoutConfig($c4ShapeInRow="4", $c4BoundaryInRow="1")
 
 
 

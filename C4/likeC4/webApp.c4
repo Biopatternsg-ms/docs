@@ -1,0 +1,16 @@
+model {
+    extend biopatternsg.webapp {
+        
+
+        services = component 'Services' {
+            description 'Services for the biopatternsg web application'
+            technology 'TypeScript'
+        }
+    }
+
+
+    services -> biopatternsg.gateway 'communicates with' {
+        description 'Communicates with the API Gateway for biopatternsg'
+        technology 'HTTPS'
+    }
+}

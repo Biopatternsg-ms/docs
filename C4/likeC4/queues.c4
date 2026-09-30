@@ -1,0 +1,23 @@
+model {
+     extend biopatternsg {
+         queue = queue 'RabbitMQ Message Queue' {
+            title 'Cola de mensajes RabbitMQ'
+            description 'RabbitMQ message queue for asynchronous communication'
+
+            queueMesh = queue 'Mesh Queue' {
+                description 'Queue for MeSH ontology data'
+            }
+
+            queuePubmed = queue 'PubMed Queue' {
+                description 'Queue for PubMed integration data'
+            }
+
+            queuePubtator = queue 'PubTator Queue' {
+                description 'Queue for PubTator integration data'
+            }
+            
+           
+        }
+        
+     }
+}
