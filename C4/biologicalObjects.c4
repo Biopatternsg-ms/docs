@@ -2,7 +2,7 @@ model {
     extend biopatternsg.biological_objects {
 
         restController = component 'Rest Controller' {
-            description 'REST controllers for BiologicalObjects (BiologicalObject, Blat, Complex, Pipeline, TranscriptionFactor)'
+            description 'REST controllers for BiologicalObjects (BiologicalObject, Complex, Pipeline, TranscriptionFactor)'
             technology 'Java 21'
         }
 
@@ -13,11 +13,6 @@ model {
 
         SearchTranscriptionFactors = component 'Search Transcription Factors' {
             description 'Search transcription factors for BiologicalObjects'
-            technology 'Java 21'
-        }
-
-        BlatSearchOptions = component 'Blat Search Options' {
-            description 'Search sequence alignment options via UCSC BLAT'
             technology 'Java 21'
         }
 
@@ -66,11 +61,6 @@ model {
             description 'Communicates with JASPAR for transcription factor binding profiles'
         }
 
-        externalSystemAdapter -> BLAT 'Communicates with' {
-            technology 'HTTPS'
-            description 'Communicates with UCSC BLAT for promoter sequence alignment'
-        }
-
     }
 
     biopatternsg.gateway -> biopatternsg.biological_objects.restController 'Routes requests to' {
@@ -80,14 +70,6 @@ model {
 
     restController -> pipelineStagesManager 'uses' {
         description 'Handles pipeline stages management requests'
-    }
-
-    restController -> BlatSearchOptions 'uses' {
-        description 'Handles BLAT promoter alignment search options requests'
-    }
-
-    BlatSearchOptions -> externalSystemAdapter 'uses' {
-        description 'Uses the external system adapter to query UCSC BLAT'
     }
 
     pipelineStagesManager -> SearchTranscriptionFactors 'uses' {

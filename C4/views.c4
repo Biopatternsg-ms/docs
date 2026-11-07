@@ -13,39 +13,64 @@ views {
     include HGNC
     include Mesh
     include PubTator
+    include TFBIND
+    include JASPAR
     
     autoLayout TopBottom
   }
 
   // Nivel 2: Contenedores
-  // AGREGAMOS "of biopatternsg" para habilitar la navegación
   view containerView of biopatternsg { 
     title 'Biopatternsg - Container Diagram'
     
     include *
     include customer
+    include adminUser
     
     autoLayout TopBottom
   }
 
+  // Nivel 3: Componentes por Contenedor
   view containerViewOfConfigAndControl of biopatternsg.config_and_control {
-    title 'ConfigAndControl - Container Diagram'
-    
+    title 'ConfigAndControl - Component Diagram'
     include *
-    
     autoLayout TopBottom
   } 
 
   view biologicalObjectsContainerView of biopatternsg.biological_objects {
-    title 'Biological Objects - Container Diagram'
-    
+    title 'Biological Objects - Component Diagram'
     include *
-
     autoLayout TopBottom
   }
 
- 
+  view ontologiesContainerView of biopatternsg.ontologies {
+    title 'Ontologies - Component Diagram'
+    include *
+    autoLayout TopBottom
+  }
 
- 
+  view pubmedIntegrationContainerView of biopatternsg.pubmed_integration {
+    title 'PubmedIntegration - Component Diagram'
+    include *
+    autoLayout TopBottom
+  }
+
+  view inferencesContainerView of biopatternsg.inferences {
+    title 'Inferences - Component Diagram'
+    include *
+    autoLayout TopBottom
+  }
+
+  view integrationsContainerView of biopatternsg.integrations {
+    title 'Integrations - Component Diagram'
+    include *
+    autoLayout TopBottom
+  }
+
+  view buildKnowledgeBaseContainerView of biopatternsg.build_knowledge_base {
+    title 'BuildKnowledgeBase - Component Diagram'
+    include *
+    autoLayout TopBottom
+  }
 
 }

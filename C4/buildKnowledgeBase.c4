@@ -1,0 +1,29 @@
+model {
+    extend biopatternsg.build_knowledge_base {
+
+        apiRouter = component 'API Router' {
+            description 'FastAPI route handlers for knowledge base generation and status checks'
+            technology 'Python, FastAPI'
+        }
+
+        generateKbUseCase = component 'Generate KB Use Case' {
+            description 'Use case orchestrating PubTator text processing, relations extraction, and alignments'
+            technology 'Python'
+        }
+
+        pubtatorKbAdapter = component 'PubTator KB Adapter' {
+            description 'NLTK tokenization and NLP extractor extracting events, synonyms, biotypes, and aligned objects'
+            technology 'Python, NLTK'
+        }
+
+    }
+
+    apiRouter -> generateKbUseCase 'uses' {
+        description 'Delegates PubTator document processing and knowledge base extraction'
+    }
+
+    generateKbUseCase -> pubtatorKbAdapter 'uses' {
+        description 'Extracts events, synonyms, and biotypes from biomedical literature text'
+    }
+
+}

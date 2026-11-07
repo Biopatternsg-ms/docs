@@ -1,0 +1,72 @@
+model {
+    extend biopatternsg.inferences {
+
+        restController = component 'Rest Controller' {
+            description 'REST controller for managing inferences, biological roles, and pathways (InferenceController)'
+            technology 'Java 21'
+        }
+
+        inferencesManager = component 'Inferences Manager' {
+            description 'Core use cases: role finding, pathway execution, biological objects update, and closing objects management'
+            technology 'Java 21'
+        }
+
+        prologEngineAdapter = component 'SWI-Prolog Engine Adapter' {
+            description 'CLI executor adapter executing dynamic biological pathway inferences in SWI-Prolog in RAM'
+            technology 'SWI-Prolog, Java 21'
+        }
+
+        dbRepositoryAdapter = component 'DB Repository Adapter' {
+            description 'Database repository adapter for inferences, pathways, and pathway graphs collections'
+            technology 'Panache'
+        }
+
+        internalClientAdapter = component 'Internal Client Adapter' {
+            description 'Internal REST client adapter communicating with Ontologies, PubmedIntegration, and ConfigAndControl'
+            technology 'Java 21'
+        }
+
+    }
+
+    biopatternsg.gateway -> biopatternsg.inferences.restController 'Routes requests to' {
+        technology 'HTTP'
+        description 'Routes requests to the Inferences REST controller'
+    }
+
+    restController -> inferencesManager 'uses' {
+        description 'Delegates role finding, pathway execution, and biological object management'
+    }
+
+    inferencesManager -> prologEngineAdapter 'uses' {
+        description 'Executes dynamic biological pathway inference using SWI-Prolog scripts'
+    }
+
+    inferencesManager -> dbRepositoryAdapter 'uses' {
+        description 'Persists and queries inferences, pathways, and consolidated pathway graphs'
+    }
+
+    inferencesManager -> internalClientAdapter 'uses' {
+        description 'Uses internal client adapter to query ontologies and knowledge base events'
+    }
+
+    dbRepositoryAdapter -> biopatternsg.mongodb.inferencesMongodb 'Reads from and writes to' {
+        technology 'MongoDB'
+        description 'Reads and writes inference configurations, biological pathways, and pathway graphs'
+    }
+
+    internalClientAdapter -> biopatternsg.ontologies.restController 'communicates with' {
+        description 'Evaluates MeSH categories and hierarchy for aligned biological objects'
+        technology 'HTTP'
+    }
+
+    internalClientAdapter -> biopatternsg.pubmed_integration.restController 'communicates with' {
+        description 'Retrieves kb_events, kb_objects, and updates evaluated biological roles'
+        technology 'HTTP'
+    }
+
+    internalClientAdapter -> biopatternsg.config_and_control.restController 'communicates with' {
+        description 'Notifies status updates of pipeline steps'
+        technology 'HTTP'
+    }
+
+}

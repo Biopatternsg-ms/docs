@@ -49,8 +49,4 @@ model {
     description 'JASPAR service for transcription factor binding profiles'
   }
 
-  BLAT = externalSystem 'UCSC BLAT' {
-    description 'UCSC Genome Browser BLAT service for sequence alignment'
-  }
-
 }

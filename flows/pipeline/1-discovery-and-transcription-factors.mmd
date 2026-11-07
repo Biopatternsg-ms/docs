@@ -1,0 +1,39 @@
+sequenceDiagram
+    autonumber
+    actor User as Usuario / Investigador
+    participant UI as Web App (React)
+    participant Gateway as KrakenD Gateway
+    participant ConfigControl as Config-and-Control
+    participant BioObjects as Search-Biological-Objects
+    participant JASPAR_TFBIND as JASPAR / TFBIND
+    participant BioAPIs as UniProt / HGNC / PDB
+    participant Ontologies as Ontologies (GO / MeSH)
+    participant RabbitMQ as RabbitMQ (queueMesh)
+    participant MongoDB as MongoDB
+
+    Note over User,MongoDB: Fase 1: Configuración y Lanzamiento del Pipeline
+    User->>UI: Configura parámetros de pipeline (símbolo genético, factores, niveles de búsqueda)
+    UI->>Gateway: POST /api/config-and-control/pipelines (Bearer JWT)
+    Gateway->>ConfigControl: POST /config-and-control/pipelines
+    ConfigControl->>MongoDB: Guarda configuración inicial (status: CREATED)
+    ConfigControl-->>UI: Retorna PipelineConfig (ID generado)
+
+    User->>UI: Solicita iniciar ejecución del pipeline
+    UI->>Gateway: POST /api/config-and-control/pipelines/launch
+    Gateway->>ConfigControl: POST /config-and-control/pipelines/launch
+    ConfigControl->>BioObjects: POST /biological-objects/pipeline/launch
+
+    Note over BioObjects,BioAPIs: Fase 2: Búsqueda de Factores y Descubrimiento
+    BioObjects->>JASPAR_TFBIND: Consulta perfiles de unión y factores de transcripción
+    JASPAR_TFBIND-->>BioObjects: Retorna factores de transcripción asociados
+    
+    BioObjects->>BioAPIs: Resuelve sinónimos, nombres canónicos y estructuras 3D (UniProt, HGNC, PDB)
+    BioAPIs-->>BioObjects: Datos enriquecidos de objetos biológicos
+
+    BioObjects->>Ontologies: Solicita Gene Ontology tree y mapeo MeSH
+    Ontologies->>RabbitMQ: Encola objetos en queueMesh para procesamiento asíncrono
+    
+    BioObjects->>MongoDB: Persiste biological_objects y mined_objects
+    BioObjects->>ConfigControl: Notifica etapa completada (SEARCH_LEVELS -> COMPLETED)
+    ConfigControl->>MongoDB: Actualiza pipeline a siguiente paso (COMBINATIONS / SEARCH_PUBMED_IDS)
+    ConfigControl-->>UI: Pipeline en ejecución / Estado actualizado

@@ -1,0 +1,67 @@
+model {
+    extend biopatternsg.integrations {
+
+        pdbController = component 'PDB Controller' {
+            description 'REST controller for Protein Data Bank IDs and structure queries'
+            technology 'Java 21'
+        }
+
+        transcriptionFactorController = component 'Transcription Factor Controller' {
+            description 'REST controller for querying transcription factors by configuration'
+            technology 'Java 21'
+        }
+
+        integrationsManager = component 'Integrations Manager' {
+            description 'Application use cases for PDB queries and transcription factors resolution'
+            technology 'Java 21'
+        }
+
+        externalClientAdapter = component 'External Client Adapter' {
+            description 'REST and GraphQL client adapters for querying RCSB Protein Data Bank'
+            technology 'Java 21'
+        }
+
+        internalClientAdapter = component 'Internal Client Adapter' {
+            description 'Internal client adapter communicating with BiologicalObjects'
+            technology 'Java 21'
+        }
+
+    }
+
+    biopatternsg.gateway -> biopatternsg.integrations.pdbController 'Routes requests to' {
+        technology 'HTTP'
+        description 'Routes PDB structure requests to the Integrations PDB controller'
+    }
+
+    biopatternsg.gateway -> biopatternsg.integrations.transcriptionFactorController 'Routes requests to' {
+        technology 'HTTP'
+        description 'Routes transcription factor requests to the Integrations TF controller'
+    }
+
+    pdbController -> integrationsManager 'uses' {
+        description 'Delegates PDB ID and structure lookups'
+    }
+
+    transcriptionFactorController -> integrationsManager 'uses' {
+        description 'Delegates transcription factor queries'
+    }
+
+    integrationsManager -> externalClientAdapter 'uses' {
+        description 'Queries external PDB REST and GraphQL services'
+    }
+
+    integrationsManager -> internalClientAdapter 'uses' {
+        description 'Uses internal client adapter to query BiologicalObjects'
+    }
+
+    externalClientAdapter -> pdb 'Communicates with' {
+        technology 'HTTPS'
+        description 'Queries RCSB PDB via REST and GraphQL for protein 3D structures'
+    }
+
+    internalClientAdapter -> biopatternsg.biological_objects.restController 'communicates with' {
+        description 'Queries biological objects data and coordinates'
+        technology 'HTTP'
+    }
+
+}
