@@ -5,7 +5,7 @@ model {
     description 'Administrator of the system'
   }
   
-  // Definimos el sistema principal (vacío por ahora)
+  // Definimos el sistema principal
   biopatternsg = system 'Biopatternsg'
 
 
@@ -49,5 +49,8 @@ model {
     description 'JASPAR service for transcription factor binding profiles'
   }
 
+  BLAT = externalSystem 'UCSC BLAT' {
+    description 'UCSC Genome Browser BLAT service for sequence alignment'
+  }
 
 }

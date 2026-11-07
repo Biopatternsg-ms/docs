@@ -28,8 +28,23 @@ model {
         }
 
         ontologies = container 'Ontologies' {
-            description 'Module for managing ontologies'
+            description 'Module for managing ontologies (Gene Ontology and MeSH)'
             technology 'Quarkus'
+        }
+
+        integrations = container 'Integrations' {
+            description 'Module for external biological integrations (PDB and transcription factors)'
+            technology 'Quarkus'
+        }
+
+        inferences = container 'Inferences' {
+            description 'Module for biological role evaluation and Prolog pathway inferences'
+            technology 'Quarkus, SWI-Prolog'
+        }
+
+        build_knowledge_base = container 'BuildKnowledgeBase' {
+            description 'Service for biomedical text mining and knowledge base generation from PubTator documents'
+            technology 'Python, FastAPI'
         }
 
         keycloack = container 'Keycloack' {
@@ -69,5 +84,4 @@ model {
         description 'Uses the biopatternsg web application for administrative tasks'
     }
 
-  
 }

@@ -2,13 +2,17 @@ model {
     extend biopatternsg.pubmed_integration {
         
         restController = component 'Rest Controller' {
-            description 'REST controller for PubmedIntegration'
+            description 'REST controller for PubmedIntegration (PubmedController)'
             technology 'Java 21'
         }
 
-     
+        pubmedManager = component 'PubMed & KB Manager' {
+            description 'Use cases for PubMed pairs, NCBI/PubTator mining, KB generation, and aligned objects'
+            technology 'Java 21'
+        }
+
         dbRepositoryAdapter = component 'DB Repository Adapter'  {
-            description 'Database repository adapter for PubmedIntegration'
+            description 'Database repository adapter for PubmedIntegration (pairs, pubmed_results, pubtator_results, kb_objects, kb_events, aligned_results)'
             technology 'Panache'
         }
 
@@ -18,21 +22,40 @@ model {
         }
 
         externalClientAdapter = component 'External Client Adapter' {
-            description 'External client adapter for PubmedIntegration'
+            description 'External client adapter for PubmedIntegration (NCBI ESearch and PubTator3 API)'
             technology 'Java 21'
         }
 
         queueAdapter = component 'Queue Adapter'  {
-            description 'Queue adapter for ConfigAndControl'
+            description 'RabbitMQ producer and consumer adapter for PubmedIntegration'
             technology 'Java 21'
         }
         
     }
 
-
     biopatternsg.gateway -> biopatternsg.pubmed_integration.restController 'Routes requests to' {
         technology 'HTTP'
         description 'Routes requests to the PubmedIntegration REST controller'
+    }
+
+    restController -> pubmedManager 'uses' {
+        description 'Delegates PubMed mining and Knowledge Base requests'
+    }
+
+    pubmedManager -> dbRepositoryAdapter 'uses' {
+        description 'Uses the database repository adapter for persistence and queries'
+    }
+
+    pubmedManager -> internalClientAdapter 'uses' {
+        description 'Uses the internal client adapter to communicate with internal microservices'
+    }
+
+    pubmedManager -> externalClientAdapter 'uses' {
+        description 'Uses the external client adapter to query PubMed and PubTator'
+    }
+
+    pubmedManager -> queueAdapter 'uses' {
+        description 'Publishes and consumes asynchronous search batches via RabbitMQ'
     }
 
     biopatternsg.pubmed_integration.dbRepositoryAdapter -> biopatternsg.mongodb.pubmedIntegrationMongodb 'Reads from and writes to' {
@@ -41,43 +64,48 @@ model {
     }
 
     internalClientAdapter -> biopatternsg.biological_objects.restController 'communicates with' {
-        description 'Communicates with the internal client adapter of BiologicalObjects'
+        description 'Communicates with BiologicalObjects to retrieve biological objects and relatives'
         technology 'HTTP'
     }
 
-    internalClientAdapter -> biopatternsg.ontologies.restController 'communicates with' {
-        description 'Communicates with the internal client adapter of Ontologies'
+    internalClientAdapter -> biopatternsg.config_and_control.restController 'communicates with' {
+        description 'Communicates with ConfigAndControl to update pipeline step statuses'
+        technology 'HTTP'
+    }
+
+    internalClientAdapter -> biopatternsg.build_knowledge_base 'communicates with' {
+        description 'Sends PubTator documents to BuildKnowledgeBase to extract KB events, synonyms, and biotypes'
         technology 'HTTP'
     }
 
     externalClientAdapter -> PubTator 'communicates with' {
-        description 'Communicates with PubTator for biomedical text mining'
-        technology 'HTTP'
+        description 'Communicates with PubTator for biomedical text mining annotations'
+        technology 'HTTPS'
     }
 
     externalClientAdapter -> PubMed 'communicates with' {
-        description 'Communicates with PubMed for scientific publications'
-        technology 'HTTP'
+        description 'Communicates with NCBI PubMed for scientific publication IDs and metadata'
+        technology 'HTTPS'
     }
 
     queueAdapter -> biopatternsg.queue.queuePubmed 'sends messages to' {
-        description 'Sends messages to the PubMed Queue for data processing'
+        description 'Sends search pair messages to the PubMed Queue for rate-limited processing'
         technology 'RabbitMQ'
     }
 
     biopatternsg.queue.queuePubmed -> queueAdapter 'sends messages to' {
-        description 'Sends messages from the PubMed Queue to the Queue Adapter for data processing'
+        description 'Delivers messages from the PubMed Queue to the Queue Adapter for NCBI querying'
         technology 'RabbitMQ'
     }
 
     queueAdapter -> biopatternsg.queue.queuePubtator 'sends messages to' {
-        description 'Sends messages to the PubTator Queue for data processing'
+        description 'Sends PMID batch messages to the PubTator Queue for data processing'
         technology 'RabbitMQ'
     }
 
     biopatternsg.queue.queuePubtator -> queueAdapter 'sends messages to' {
-        description 'Sends messages from the PubTator Queue to the Queue Adapter for data processing'
+        description 'Delivers messages from the PubTator Queue to the Queue Adapter for PubTator querying'
         technology 'RabbitMQ'
     }
- 
+
 }

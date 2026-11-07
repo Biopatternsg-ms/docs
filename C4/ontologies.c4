@@ -1,17 +1,17 @@
 model {
-    extend  biopatternsg.ontologies {
+    extend biopatternsg.ontologies {
         restController = component 'Rest Controller' {
-            description 'REST controller for Ontologies'
+            description 'REST controllers for Ontologies (GeneOntologyController, MeshOntologyController)'
             technology 'Java 21'
         }
 
         ontologiesManager = component 'Ontologies Manager' {
-            description 'Ontologies manager for Ontologies'
+            description 'Application services and use cases for Gene Ontology and MeSH hierarchy management'
             technology 'Java 21'
         }
 
         dbRepositoryAdapter = component 'DB Repository Adapter'  {
-            description 'Database repository adapter for Ontologies'
+            description 'Database repository adapter for Ontologies (go_term and mesh_ontology collections)'
             technology 'Panache'
         }
 
@@ -21,31 +21,55 @@ model {
         }
 
         externalClientAdapter = component 'External Client Adapter' {
-            description 'External client adapter for Ontologies'
+            description 'External client adapter for Ontologies (QuickGO and NCBI MeSH E-Utilities)'
             technology 'Java 21'
         }
 
         queueAdapter = component 'Queue Adapter'  {
-            description 'Queue adapter for ConfigAndControl'
+            description 'RabbitMQ producer and consumer adapter for Ontologies MeSH processing'
             technology 'Java 21'
         }
         
     }
 
+    restController -> ontologiesManager 'uses' {
+        description 'Delegates Gene Ontology and MeSH ontology operations'
+    }
+
+    ontologiesManager -> dbRepositoryAdapter 'uses' {
+        description 'Uses the database repository adapter for ontology persistence and queries'
+    }
+
+    ontologiesManager -> internalClientAdapter 'uses' {
+        description 'Uses the internal client adapter to update MeSH IDs in BiologicalObjects'
+    }
+
+    ontologiesManager -> externalClientAdapter 'uses' {
+        description 'Uses the external client adapter to query QuickGO and NCBI MeSH'
+    }
+
+    ontologiesManager -> queueAdapter 'uses' {
+        description 'Enqueues and processes biological objects for asynchronous MeSH tree building'
+    }
+
+    dbRepositoryAdapter -> biopatternsg.mongodb.ontologiesMongodb 'Reads from and writes to' {
+        technology 'MongoDB'
+        description 'Reads from and writes to the Ontologies MongoDB database'
+    }
 
     internalClientAdapter -> biopatternsg.biological_objects.restController 'communicates with' {
-        description 'Communicates with the internal client adapter of BiologicalObjects'
+        description 'Communicates with BiologicalObjects to update MeSH IDs and query relatives'
         technology 'HTTP'
     }
 
     externalClientAdapter -> quickgo 'communicates with' {
-        description 'Communicates with QuickGO for ontology data'
-        technology 'HTTP'
+        description 'Communicates with QuickGO for Gene Ontology data'
+        technology 'HTTPS'
     }
 
     externalClientAdapter -> Mesh 'communicates with' {
-        description 'Communicates with MeSH for ontology data'
-        technology 'HTTP'
+        description 'Communicates with NCBI MeSH for medical subject headings data'
+        technology 'HTTPS'
     }
 
     queueAdapter -> biopatternsg.queue.queueMesh 'sends messages to' {
@@ -54,7 +78,7 @@ model {
     }
 
     biopatternsg.queue.queueMesh -> queueAdapter 'sends messages to' {
-        description 'Sends messages from the Mesh Queue to the Queue Adapter for ontology data processing'
+        description 'Delivers messages from the Mesh Queue to the Queue Adapter for ontology data processing'
         technology 'RabbitMQ'
     }
-    }
+}

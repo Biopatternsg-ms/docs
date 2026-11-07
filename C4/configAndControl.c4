@@ -3,17 +3,22 @@ model {
     extend biopatternsg.config_and_control {
 
         restController = component 'Rest Controller' {
-            description 'REST controller for ConfigAndControl'
+            description 'REST controllers for ConfigAndControl (Pipelines, Users, Admin, Networks)'
             technology 'Java 21'
         }
 
-        pipelinesOrchester = component 'pipelines Orchestration' {
-            description 'Pipelines orchestration for ConfigAndControl'
+        pipelinesOrchester = component 'Pipelines Orchestration' {
+            description 'Pipelines orchestration and step management for ConfigAndControl'
             technology 'Java 21'
         }
 
         usersManager = component 'UsersManager' {
-            description 'Users manager for ConfigAndControl'
+            description 'Users and authentication manager for ConfigAndControl'
+            technology 'Java 21'
+        }
+
+        networksManager = component 'NetworksManager' {
+            description 'Networks configuration manager for ConfigAndControl'
             technology 'Java 21'
         }
 
@@ -45,11 +50,15 @@ model {
     }
 
     restController -> usersManager 'uses' {
-        description 'Handles user management requests'
+        description 'Handles user management and authentication requests'
     }
 
     restController -> pipelinesOrchester 'uses' {
-        description 'Handles pipeline orchestration requests'
+        description 'Handles pipeline creation, configuration, and orchestration requests'
+    }
+
+    restController -> networksManager 'uses' {
+        description 'Handles biological network configuration requests'
     }
 
     pipelinesOrchester -> InternalClientAdapter 'uses' {
@@ -68,20 +77,28 @@ model {
         description 'Uses the database repository adapter for data persistence'
     }
 
+    networksManager -> dbRepositoryAdapter 'uses' {
+        description 'Uses the database repository adapter for network persistence'
+    }
+
     KeycloakClientAdapter -> biopatternsg.keycloack 'communicates with' {
         description 'Communicates with Keycloak for authentication and authorization'
-        technology 'http'
+        technology 'HTTP'
     }
 
     InternalClientAdapter -> biopatternsg.biological_objects.restController 'communicates with' {
-        description 'Communicates with BiologicalObjects for internal service communication'
-        technology 'http'
+        description 'Communicates with BiologicalObjects for pipeline discovery and aligned objects'
+        technology 'HTTP'
     }
 
     InternalClientAdapter -> biopatternsg.pubmed_integration.restController 'communicates with' {
-        description 'Communicates with PubmedIntegration for internal service communication'
-        technology 'http'
+        description 'Communicates with PubmedIntegration for pairs, PubMed/PubTator mining, and KB generation'
+        technology 'HTTP'
     }
 
+    InternalClientAdapter -> biopatternsg.inferences 'communicates with' {
+        description 'Communicates with Inferences for role evaluation and Prolog pathway execution'
+        technology 'HTTP'
+    }
 
 }

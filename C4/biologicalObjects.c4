@@ -1,8 +1,8 @@
-model{
+model {
     extend biopatternsg.biological_objects {
 
         restController = component 'Rest Controller' {
-            description 'REST controller for BiologicalObjects'
+            description 'REST controllers for BiologicalObjects (BiologicalObject, Blat, Complex, Pipeline, TranscriptionFactor)'
             technology 'Java 21'
         }
 
@@ -13,6 +13,11 @@ model{
 
         SearchTranscriptionFactors = component 'Search Transcription Factors' {
             description 'Search transcription factors for BiologicalObjects'
+            technology 'Java 21'
+        }
+
+        BlatSearchOptions = component 'Blat Search Options' {
+            description 'Search sequence alignment options via UCSC BLAT'
             technology 'Java 21'
         }
 
@@ -27,12 +32,12 @@ model{
         }
 
         UpdateObjects = component 'Update Objects' {
-            description 'Update objects for BiologicalObjects'
+            description 'Update objects (including MeSH IDs) for BiologicalObjects'
             technology 'Java 21'
         }
 
         FindObjects = component 'Find Objects' {
-            description 'Find objects for BiologicalObjects'
+            description 'Find biological objects and complexes for BiologicalObjects'
             technology 'Java 21'
         }
 
@@ -60,19 +65,35 @@ model{
             technology 'HTTPS'
             description 'Communicates with JASPAR for transcription factor binding profiles'
         }
-        
+
+        externalSystemAdapter -> BLAT 'Communicates with' {
+            technology 'HTTPS'
+            description 'Communicates with UCSC BLAT for promoter sequence alignment'
+        }
+
     }
 
+    biopatternsg.gateway -> biopatternsg.biological_objects.restController 'Routes requests to' {
+        technology 'HTTP'
+        description 'Routes requests to the BiologicalObjects REST controller'
+    }
 
     restController -> pipelineStagesManager 'uses' {
         description 'Handles pipeline stages management requests'
+    }
+
+    restController -> BlatSearchOptions 'uses' {
+        description 'Handles BLAT promoter alignment search options requests'
+    }
+
+    BlatSearchOptions -> externalSystemAdapter 'uses' {
+        description 'Uses the external system adapter to query UCSC BLAT'
     }
 
     pipelineStagesManager -> SearchTranscriptionFactors 'uses' {
         description 'Handles search transcription factors requests'
     }
 
-   
     pipelineStagesManager -> DiscoveryBiologicalObject 'uses' {
         description 'Handles discover biological object requests'
     }
@@ -104,31 +125,36 @@ model{
 
     externalSystemAdapter -> uniprot 'Communicates with' {
         technology 'HTTPS'
-        description 'Communicates with QuickGO for Gene Ontology data'
+        description 'Communicates with UniProt for protein information and synonyms'
     }
 
     externalSystemAdapter -> HGNC 'Communicates with' {
         technology 'HTTPS'
-        description 'Communicates with QuickGO for Gene Ontology data'
+        description 'Communicates with HGNC for gene nomenclature data'
     }
 
     externalSystemAdapter -> pdb 'Communicates with' {
         technology 'HTTPS'
-        description 'Communicates with QuickGO for Gene Ontology data'
+        description 'Communicates with PDB / PDBe for 3D protein structure data and complexes'
     }
 
     internalClientAdapter -> biopatternsg.config_and_control.restController 'communicates with' {
-        description 'Communicates with ConfigAndControl for internal service communication'
-        technology 'http'
+        description 'Communicates with ConfigAndControl for pipeline step updates'
+        technology 'HTTP'
     }
 
     internalClientAdapter -> biopatternsg.ontologies.restController 'communicates with' {
-        description 'Communicates with Ontologies for internal service communication'
-        technology 'http'
+        description 'Communicates with Ontologies for Gene Ontology tree and MeSH queue processing'
+        technology 'HTTP'
+    }
+
+    internalClientAdapter -> biopatternsg.pubmed_integration.restController 'communicates with' {
+        description 'Communicates with PubmedIntegration for internal service communication'
+        technology 'HTTP'
     }
 
     restController -> FindObjects 'uses' {
-        description 'Handles find objects requests'
+        description 'Handles find objects and protein complexes requests'
     }
 
     restController -> UpdateObjects 'uses' {
@@ -141,6 +167,10 @@ model{
 
     FindObjects -> dbRepositoryAdapter 'uses' {
         description 'Uses the database repository adapter for data persistence'
+    }
+
+    FindObjects -> externalSystemAdapter 'uses' {
+        description 'Uses the external system adapter for querying protein complexes and external records'
     }
 
     restController -> SearchTranscriptionFactors 'uses' {
