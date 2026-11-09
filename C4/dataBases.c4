@@ -18,6 +18,9 @@ model {
             pubmedIntegrationMongodb = database 'PubmedIntegrationMongoDB' {
                 description 'Database for storing PubMed integration data'
             }
+            inferencesMongodb = database 'InferencesMongoDB' {
+                description 'Database for storing inference configurations, biological pathways, and pathway graphs'
+            }
         }
 
         postgresql = database 'PostgreSQL' {
@@ -27,8 +30,6 @@ model {
                 description 'Database for storing keycloack data'
             }
         }
-
-
 
     }
 }

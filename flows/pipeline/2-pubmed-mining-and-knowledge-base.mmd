@@ -1,0 +1,39 @@
+sequenceDiagram
+    autonumber
+    participant ConfigControl as Config-and-Control
+    participant Pubmed as Pubmed-Integration
+    participant RabbitMQ as RabbitMQ
+    participant NCBI as NCBI PubMed API
+    participant PubTator as PubTator3 API
+    participant BuildKB as Build-Knowledge-Base (FastAPI)
+    participant MongoDB as MongoDB
+
+    Note over ConfigControl,MongoDB: Fase 1: Generación de Pares y Búsqueda de Publicaciones (PMIDs)
+    ConfigControl->>Pubmed: POST /pubmed/build-pairs (PipelineId, levels, user)
+    Pubmed->>MongoDB: Genera pares combinatorios y guarda en coleccion 'pairs'
+    
+    ConfigControl->>Pubmed: POST /pubmed/search-pubmed-ids-by-pairs
+    Pubmed->>RabbitMQ: Encola pares en 'queuePubmed'
+    RabbitMQ-->>Pubmed: Consumidor procesa pares con rate limiter
+    Pubmed->>NCBI: GET ESearch (términos biológicos)
+    NCBI-->>Pubmed: Retorna IDs de publicaciones científicas (PMIDs)
+    Pubmed->>MongoDB: Persiste en 'pubmed_results' y actualiza progreso de búsqueda
+
+    Note over ConfigControl,MongoDB: Fase 2: Minería de Texto con PubTator
+    ConfigControl->>Pubmed: POST /pubmed/search-pubtator-by-pmids
+    Pubmed->>RabbitMQ: Encola lotes de PMIDs en 'queuePubtator'
+    RabbitMQ-->>Pubmed: Consumidor procesa lotes de PMIDs
+    Pubmed->>PubTator: Consulta anotaciones biomédicas por PMIDs
+    PubTator-->>Pubmed: Retorna artículos anotados (genes, proteínas, químicos, enfermedades)
+    Pubmed->>MongoDB: Guarda anotaciones en 'pubtator_results'
+
+    Note over ConfigControl,MongoDB: Fase 3: Extracción de Eventos KB y Alineación
+    ConfigControl->>Pubmed: POST /pubmed/generate-kb
+    Pubmed->>BuildKB: POST /generate-kb (documentos PubTator y pipelineId)
+    Note over BuildKB: Tokenización con NLTK, extracción de relaciones y sinónimos
+    BuildKB-->>Pubmed: Retorna eventos event(S,rel,O), biotipos y sinónimos estructurados
+    Pubmed->>MongoDB: Persiste en colecciones 'kb_events' y 'kb_objects'
+
+    ConfigControl->>Pubmed: POST /pubmed/generate-aligned-objects
+    Pubmed->>MongoDB: Cruza objetos expertos del usuario y persiste en 'aligned_results'
+    Pubmed->>ConfigControl: Notifica fin de etapa KB (UPDATE_ALIGNED_OBJECTS -> IN_PROGRESS)

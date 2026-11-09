@@ -1,0 +1,51 @@
+sequenceDiagram
+    autonumber
+    actor User as Usuario / Investigador
+    participant UI as Web App (React)
+    participant Gateway as KrakenD Gateway
+    participant ConfigControl as Config-and-Control
+    participant Inferences as Inferences Service
+    participant Ontologies as Ontologies (MeSH)
+    participant SWIProlog as SWI-Prolog Engine (RAM)
+    participant MongoDB as MongoDB
+
+    Note over User,MongoDB: Fase 1: Evaluación Automática de Roles Biológicos
+    ConfigControl->>Inferences: POST /inferences/find-roles (pipelineId, alignedObjects)
+    Inferences->>Ontologies: POST /mesh-ontology/check-all-types (evaluación de jerarquía MeSH)
+    Ontologies-->>Inferences: Clasificación MeSH (PROTEIN, ENZYME, RECEPTOR, LIGAND, etc.)
+    Inferences->>MongoDB: Unifica y actualiza roles en 'kb_objects'
+    Inferences->>ConfigControl: Notifica fin de FIND_ROLES (UPDATE_BIOLOGICAL_OBJECTS -> IN_PROGRESS)
+
+    Note over User,MongoDB: Fase 2: Revisión de Roles y Selección de Objetos de Cierre
+    User->>UI: Consulta objetos biológicos y roles detectados
+    UI->>Gateway: GET /api/inferences/biological-objects/{pipelineId}
+    Gateway->>Inferences: GET /inferences/biological-objects/{pipelineId}
+    Inferences->>MongoDB: Lee objetos y roles
+    Inferences-->>UI: Lista de objetos con roles asignados
+
+    User->>UI: Modifica/confirma roles biológicos
+    UI->>Gateway: PUT /api/inferences/biological-objects/{pipelineId}
+    Gateway->>Inferences: PUT /inferences/biological-objects/{pipelineId}
+    Inferences->>MongoDB: Actualiza roles definitivos en 'kb_objects'
+    Inferences->>ConfigControl: Notifica paso SELECT_CLOSING_OBJECTS en progreso
+
+    User->>UI: Selecciona objetos de cierre (closing objects), profundidad máxima y filtros
+    UI->>Gateway: POST /api/inferences/closing-objects/{pipelineId}
+    Gateway->>Inferences: POST /inferences/closing-objects/{pipelineId}
+    Inferences->>MongoDB: Guarda closing objects
+
+    Note over Inferences,MongoDB: Fase 3: Inferencia Dinámica de Pathways en SWI-Prolog
+    Inferences->>MongoDB: Carga kb_events y kb_objects del pipelineId
+    Inferences->>SWIProlog: Ejecuta inferencia dinámica en RAM (reglas Prolog + clausura)
+    SWIProlog-->>Inferences: Retorna pathways biológicos inferidos y eventos asociados
+    
+    Inferences->>Inferences: Construye grafo consolidado (nodos con biotipos y aristas con frecuencias)
+    Inferences->>MongoDB: Persiste en 'pathways' y 'pathway_graphs'
+    Inferences->>ConfigControl: Notifica fin de INFER_PATHWAYS (COMPLETED)
+
+    Note over User,MongoDB: Fase 4: Exploración de Resultados en UI
+    User->>UI: Abre visualización del grafo biológico y pathways
+    UI->>Gateway: GET /api/inferences/pathway-graphs/{pipelineId}
+    Gateway->>Inferences: GET /inferences/pathway-graphs/{pipelineId}
+    Inferences->>MongoDB: Consulta 'pathway_graphs'
+    Inferences-->>UI: Retorna nodos, aristas y frecuencias para renderizado de red

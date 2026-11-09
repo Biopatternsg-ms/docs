@@ -22,7 +22,7 @@ Inicia un servidor de desarrollo con recarga en caliente (HMR) y explorador inte
 
 ```bash
 # 1. Asegúrate de estar en este directorio
-cd "arquitectura doc/C4/likeC4"
+cd "docs/C4"
 
 # 2. Iniciar el servidor interactivo
 npx likec4 start .
@@ -91,11 +91,14 @@ El modelo está modularizado por niveles y responsabilidades:
 | [`specs.c4`](specs.c4) | **Especificación** | Define los tipos de elementos (`user`, `system`, `container`, `component`, `database`, `ui`, `queue`) y sus estilos/formas visuales. |
 | [`context.c4`](context.c4) | **Nivel 1 (Contexto)** | Define los usuarios (`customer`, `adminUser`), el sistema principal (`biopatternsg`) y los sistemas externos (NCBI, UniProt, PDB, QuickGO, etc.). |
 | [`containers.c4`](containers.c4) | **Nivel 2 (Contenedores)** | Define los contenedores principales del sistema: Web App, KrakenD Gateway, microservicios backend y servicios de soporte. |
-| [`dataBases.c4`](dataBases.c4) | **Almacenamiento** | Define las bases de datos del sistema (instancia de MongoDB y PostgreSQL). |
+| [`dataBases.c4`](dataBases.c4) | **Almacenamiento** | Define las bases de datos del sistema (instancias de MongoDB y PostgreSQL). |
 | [`queues.c4`](queues.c4) | **Mensajería** | Modela el broker de colas asíncronas (**RabbitMQ**) y las colas de eventos. |
 | [`webApp.c4`](webApp.c4) | **Frontend** | Modela el contenedor de la aplicación web en React. |
 | [`configAndControl.c4`](configAndControl.c4) | **Nivel 3 (Componentes)** | Componentes internos de `config_and_control` (Controllers, Orchestrators, Managers y Adapters). |
-| [`biologicalObjects.c4`](biologicalObjects.c4) | **Nivel 3 (Componentes)** | Componentes internos de `biological_objects` y sus integraciones externas. |
-| [`ontologies.c4`](ontologies.c4) | **Nivel 3 (Componentes)** | Componentes internos del microservicio `ontologies`. |
+| [`biologicalObjects.c4`](biologicalObjects.c4) | **Nivel 3 (Componentes)** | Componentes internos de `biological_objects` y sus integraciones externas (JASPAR, TFBIND, PDB). |
+| [`ontologies.c4`](ontologies.c4) | **Nivel 3 (Componentes)** | Componentes internos del microservicio `ontologies` (Gene Ontology, MeSH, RabbitMQ). |
 | [`PubmedIntegration.c4`](PubmedIntegration.c4) | **Nivel 3 (Componentes)** | Componentes internos de `pubmed_integration` y su conexión con `build_knowledge_base`. |
+| [`inferences.c4`](inferences.c4) | **Nivel 3 (Componentes)** | Componentes internos de `inferences` (InferenceController, SWI-Prolog Engine Adapter, Panache DB Adapter). |
+| [`integrations.c4`](integrations.c4) | **Nivel 3 (Componentes)** | Componentes internos de `integrations` (PDB Controller, Transcription Factor Controller, GraphQL & REST PDB Adapters). |
+| [`buildKnowledgeBase.c4`](buildKnowledgeBase.c4) | **Nivel 3 (Componentes)** | Componentes internos de `build_knowledge_base` (FastAPI Router, Generate KB Use Case, PubTator NLP Adapter). |
 | [`views.c4`](views.c4) | **Vistas de Navegación** | Declara las vistas renderizables (Nivel 1 Contexto, Nivel 2 Contenedores y Nivel 3 Componentes por microservicio). |

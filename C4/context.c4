@@ -5,7 +5,7 @@ model {
     description 'Administrator of the system'
   }
   
-  // Definimos el sistema principal (vacío por ahora)
+  // Definimos el sistema principal
   biopatternsg = system 'Biopatternsg'
 
 
@@ -48,6 +48,5 @@ model {
   JASPAR = externalSystem 'JASPAR' {
     description 'JASPAR service for transcription factor binding profiles'
   }
-
 
 }
