@@ -76,10 +76,6 @@ model {
         description 'Sends emails to customers for user verification and password reset'
     }
 
-    customer -> keycloack 'Interacts with' {
-        description 'Interacts with Keycloak for authentication and authorization'
-    }
-
     adminUser -> webapp 'Uses' {
         description 'Uses the biopatternsg web application for administrative tasks'
     }

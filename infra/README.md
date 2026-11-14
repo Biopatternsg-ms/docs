@@ -92,20 +92,22 @@ python3 deploy.py
 * **Seguridad API**: KrakenD valida tokens JWT directamente contra Keycloak.
 * **Microservicios Backend en Quarkus**:
   * `config-and-control-service` (interactúa con Keycloak para registro y login).
-  * `ontologies-service` y `pubmed-integration-service` (integrados con colas/eventos en **RabbitMQ**).
+  * `ontologies-service` (integrado con la cola `mesh-queue` en **RabbitMQ**).
+  * `pubmed-integration-service` (integrado con las colas `ncbi-pubmed-queue` y `pubtator-queue` en **RabbitMQ**).
   * `biological-objects-service`.
-  * `integration-service`.
   * `inferences-service`.
 * **Microservicios en Python / FastAPI**:
-  * `ai-reasoning-service`: Microservicio de razonamiento de IA expuesto a través de KrakenD y con base de datos propia en MongoDB (`ai-reasoning-db`).
   * `build-knowledge-base`: Microservicio interno sin base de datos ni exposición pública, consumido directamente por `pubmed-integration-service`.
+* **Broker de Mensajería Asíncrona (RabbitMQ)**: Un único contenedor Docker con tres colas de procesamiento asíncrono:
+  * `ncbi-pubmed-queue`
+  * `pubtator-queue`
+  * `mesh-queue`
 * **Persistencia NoSQL**: Un único contenedor Docker para el servidor **MongoDB** con bases de datos lógicas aisladas para cada microservicio:
   * `config-and-control-db`
   * `ontologies-db`
   * `pubmed-integration-db`
   * `biological-objects-db`
   * `inferences-db`
-  * `ai-reasoning-db`
 
 ---
 

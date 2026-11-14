@@ -73,7 +73,7 @@ model {
         technology 'HTTP'
     }
 
-    internalClientAdapter -> biopatternsg.build_knowledge_base 'communicates with' {
+    internalClientAdapter -> biopatternsg.build_knowledge_base.apiRouter 'communicates with' {
         description 'Sends PubTator documents to BuildKnowledgeBase to extract KB events, synonyms, and biotypes'
         technology 'HTTP'
     }

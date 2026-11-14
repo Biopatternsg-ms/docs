@@ -1,16 +1,47 @@
 model {
     extend biopatternsg.webapp {
-        
+
+        components = component 'Components' {
+            description 'Reusable UI elements (atoms, molecules, organisms)'
+            technology 'React, TypeScript'
+        }
+
+        modules = component 'Modules' {
+            description 'Application feature modules (public, dashboard, admin)'
+            technology 'React, TypeScript'
+        }
 
         services = component 'Services' {
-            description 'Services for the biopatternsg web application'
+            description 'API clients and auth services (experimentService, authService, networkService, userService)'
             technology 'TypeScript'
         }
+
     }
 
+    customer -> biopatternsg.webapp.modules 'Interacts with' {
+        description 'Uses the web application modules'
+    }
 
-    services -> biopatternsg.gateway 'communicates with' {
-        description 'Communicates with the API Gateway for biopatternsg'
+    adminUser -> biopatternsg.webapp.modules 'Interacts with' {
+        description 'Uses the admin and dashboard modules'
+    }
+
+    modules -> components 'uses' {
+        description 'Composes views using reusable UI elements'
+    }
+
+    modules -> services 'uses' {
+        description 'Consumes backend APIs and authentication flows'
+    }
+
+    services -> biopatternsg.gateway 'Communicates with' {
+        description 'Communicates with the API Gateway for biopatternsg (/api/*)'
         technology 'HTTPS'
     }
+
+    services -> biopatternsg.keycloack 'Authenticates with' {
+        description 'Performs authentication against Keycloak'
+        technology 'HTTPS'
+    }
+
 }
