@@ -93,7 +93,7 @@ El modelo está modularizado por niveles y responsabilidades:
 | [`containers.c4`](containers.c4) | **Nivel 2 (Contenedores)** | Define los contenedores principales del sistema: Web App, KrakenD Gateway, microservicios backend y servicios de soporte. |
 | [`dataBases.c4`](dataBases.c4) | **Almacenamiento** | Define las bases de datos del sistema (instancias de MongoDB y PostgreSQL). |
 | [`queues.c4`](queues.c4) | **Mensajería** | Modela el broker de colas asíncronas (**RabbitMQ**) y las colas de eventos. |
-| [`webApp.c4`](webApp.c4) | **Frontend** | Modela el contenedor de la aplicación web en React. |
+| [`webApp.c4`](webApp.c4) | **Nivel 3 (Componentes)** | Estructura simplificada de la aplicación web React (`Components`, `Modules` y `Services`). |
 | [`configAndControl.c4`](configAndControl.c4) | **Nivel 3 (Componentes)** | Componentes internos de `config_and_control` (Controllers, Orchestrators, Managers y Adapters). |
 | [`biologicalObjects.c4`](biologicalObjects.c4) | **Nivel 3 (Componentes)** | Componentes internos de `biological_objects` y sus integraciones externas (JASPAR, TFBIND, PDB). |
 | [`ontologies.c4`](ontologies.c4) | **Nivel 3 (Componentes)** | Componentes internos del microservicio `ontologies` (Gene Ontology, MeSH, RabbitMQ). |

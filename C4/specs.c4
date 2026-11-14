@@ -1,12 +1,73 @@
 specification {
-  element user { style { shape person } }
-  element adminUser { style { shape person color amber }  }
-  element system
-  element container
-  element externalSystem { style { color muted } }
+  element user {
+    style {
+      shape person
+      size small
+      padding xsmall
+      textSize xlarge
+    }
+  }
+  element adminUser {
+    style {
+      shape person
+      color amber
+      size small
+      padding xsmall
+      textSize xlarge
+    }
+  }
+  element system {
+    style {
+      size small
+      padding xsmall
+      textSize xlarge
+    }
+  }
+  element container {
+    style {
+      size small
+      padding xsmall
+      textSize xlarge
+    }
+  }
+  element externalSystem {
+    style {
+      color muted
+      size small
+      padding xsmall
+      textSize xlarge
+    }
+  }
   element group
-  element component
-  element database { style { shape cylinder } }
-  element ui { style {  shape: browser } }
-  element queue { style { shape: queue } }
+  element component {
+    style {
+      size small
+      padding xsmall
+      textSize xlarge
+    }
+  }
+  element database {
+    style {
+      shape cylinder
+      size small
+      padding xsmall
+      textSize xlarge
+    }
+  }
+  element ui {
+    style {
+      shape browser
+      size small
+      padding xsmall
+      textSize xlarge
+    }
+  }
+  element queue {
+    style {
+      shape queue
+      size small
+      padding xsmall
+      textSize xlarge
+    }
+  }
 }

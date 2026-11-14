@@ -73,9 +73,11 @@ with Diagram(
                 with Cluster("Contenedor Web App", graph_attr={"bgcolor": "#EBF8FF", "pencolor": "#3182CE"}):
                     web_app = React("React App\n(Servida por Nginx)")
 
-                # 4. Broker de Mensajería Asíncrona (RabbitMQ)
-                with Cluster("Broker de Mensajería", graph_attr={"bgcolor": "#FFF7ED", "pencolor": "#EA580C"}):
-                    rabbitmq = RabbitMQ("RabbitMQ\n(Contenedor Docker)")
+                # 4. Contenedor único para el Broker de Mensajería Asíncrona (RabbitMQ) con sus colas
+                with Cluster("Contenedor Docker: Broker RabbitMQ", graph_attr={"bgcolor": "#FFF7ED", "pencolor": "#EA580C", "margin": "15"}):
+                    ncbi_pubmed_queue = RabbitMQ("Cola:\nncbi-pubmed-queue")
+                    pubtator_queue = RabbitMQ("Cola:\npubtator-queue")
+                    mesh_queue = RabbitMQ("Cola:\nmesh-queue")
 
                 # 5. Contenedores de Microservicios (Quarkus)
                 with Cluster("Microservicios (Quarkus)", graph_attr={"bgcolor": "#F0FFF4", "pencolor": "#38A169"}):
@@ -83,12 +85,10 @@ with Diagram(
                     onto_svc = Quarkus("ontologies\n-service\n(Contenedor Docker)")
                     bio_svc = Quarkus("biological-objects\n-service\n(Contenedor Docker)")
                     cfg_svc = Quarkus("config-and-control\n-service\n(Contenedor Docker)")
-                    integration_svc = Quarkus("integration\n-service\n(Contenedor Docker)")
                     inference_svc = Quarkus("inferences\n-service\n(Contenedor Docker)")
 
                 # 6. Microservicios en Python / FastAPI
                 with Cluster("Microservicios (Python / FastAPI)", graph_attr={"bgcolor": "#FEF3C7", "pencolor": "#D97706"}):
-                    ai_reasoning_svc = FastAPI("ai-reasoning\n-service\n(Contenedor Docker)")
                     build_kb_svc = FastAPI("build-knowledge-base\n(Contenedor Docker)")
 
                 # 7. Contenedor único para el motor de Base de Datos MongoDB con bases de datos por servicio
@@ -98,7 +98,6 @@ with Diagram(
                     bio_db = Mongodb("DB:\nbiological-objects-db")
                     cfg_db = Mongodb("DB:\nconfig-and-control-db")
                     inference_db = Mongodb("DB:\ninferences-db")
-                    ai_reasoning_db = Mongodb("DB:\nai-reasoning-db")
 
                 # 8. Contenedores de Autenticación (Keycloak con icono personalizado y PostgreSQL)
                 with Cluster("Autenticación y Autorización (IAM)", graph_attr={"bgcolor": "#FAF5FF", "pencolor": "#805AD5"}):
@@ -122,9 +121,7 @@ with Diagram(
     gateway >> Edge(color="#38A169") >> onto_svc
     gateway >> Edge(color="#38A169") >> bio_svc
     gateway >> Edge(color="#38A169") >> cfg_svc
-    gateway >> Edge(color="#38A169") >> integration_svc
     gateway >> Edge(color="#38A169") >> inference_svc
-    gateway >> Edge(color="#D97706") >> ai_reasoning_svc
 
     # Microservicios persisten en sus respectivas BDs dentro del contenedor de MongoDB
     pubmed_svc >> Edge(label="persistencia", color="#4A5568") >> pubmed_db
@@ -132,11 +129,11 @@ with Diagram(
     bio_svc >> Edge(label="persistencia", color="#4A5568") >> bio_db
     cfg_svc >> Edge(label="persistencia", color="#4A5568") >> cfg_db
     inference_svc >> Edge(label="persistencia", color="#4A5568") >> inference_db
-    ai_reasoning_svc >> Edge(label="persistencia", color="#4A5568") >> ai_reasoning_db
 
     # Integración con RabbitMQ (comunicación asíncrona por colas/eventos)
-    pubmed_svc >> Edge(label="AMQP / Eventos", color="#EA580C", style="dashed") >> rabbitmq
-    onto_svc >> Edge(label="AMQP / Eventos", color="#EA580C", style="dashed") >> rabbitmq
+    pubmed_svc >> Edge(label="AMQP / Pares", color="#EA580C", style="dashed") >> ncbi_pubmed_queue
+    pubmed_svc >> Edge(label="AMQP / PMIDs", color="#EA580C", style="dashed") >> pubtator_queue
+    onto_svc >> Edge(label="AMQP / MeSH", color="#EA580C", style="dashed") >> mesh_queue
 
     # pubmed-integration-service hace uso de build-knowledge-base (comunicación interna directa)
     pubmed_svc >> Edge(label="Procesamiento KB", color="#D97706", style="dashed") >> build_kb_svc
